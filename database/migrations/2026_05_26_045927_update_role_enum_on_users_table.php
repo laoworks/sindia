@@ -19,7 +19,6 @@ return new class extends Migration
                 'guru',
                 'kepala_sekolah',
                 'operator',
-                'waka_kurikulum'
             ])->default('guru')->change();
         });
     }
