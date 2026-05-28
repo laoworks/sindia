@@ -2,13 +2,18 @@
 
 @section('content')
 
+@php
+    $user = auth()->user();
+@endphp
+
+<!-- HEADER -->
 <div class="mb-6">
     <h1 class="text-3xl font-bold">
         Dashboard Admin
     </h1>
 
     <p class="text-gray-500">
-        Selamat datang {{ auth()->user()->name }}
+        Selamat datang, {{ $user->name }}
     </p>
 </div>
 
@@ -17,22 +22,30 @@
 
     <div class="bg-white rounded-2xl shadow p-6">
         <p class="text-sm text-gray-500">Total Guru</p>
-        {{-- <h2 class="text-3xl font-bold mt-2">{{ $totalGuru }}</h2> --}}
+        <h2 class="text-3xl font-bold mt-2">
+            {{ $totalGuru }}
+        </h2>
     </div>
 
     <div class="bg-white rounded-2xl shadow p-6">
         <p class="text-sm text-gray-500">Total Mapel</p>
-        {{-- <h2 class="text-3xl font-bold mt-2">{{ $totalMapel }}</h2> --}}
+        <h2 class="text-3xl font-bold mt-2">
+            {{ $totalMapel }}
+        </h2>
     </div>
 
     <div class="bg-white rounded-2xl shadow p-6">
         <p class="text-sm text-gray-500">Jadwal Mengajar</p>
-        {{-- <h2 class="text-3xl font-bold mt-2">{{ $totalJadwal }}</h2> --}}
+        <h2 class="text-3xl font-bold mt-2">
+            {{ $totalJadwal }}
+        </h2>
     </div>
 
     <div class="bg-white rounded-2xl shadow p-6">
         <p class="text-sm text-gray-500">Absensi Hari Ini</p>
-        {{-- <h2 class="text-3xl font-bold mt-2">{{ $absensiHariIni }}</h2> --}}
+        <h2 class="text-3xl font-bold mt-2">
+            {{ $absensiHariIni }}
+        </h2>
     </div>
 
 </div>
@@ -43,7 +56,7 @@
     <div class="bg-white rounded-2xl shadow p-6">
         <p class="text-sm text-gray-500">Guru Terlambat Hari Ini</p>
         <h2 class="text-3xl font-bold mt-2 text-red-500">
-            {{-- {{ $terlambatHariIni }} --}}
+            {{ $terlambatHariIni }}
         </h2>
     </div>
 
@@ -56,19 +69,30 @@
 
 </div>
 
-<!-- SIMPLE ANALYTICS -->
+<!-- ABSENSI 7 HARI -->
 <div class="bg-white rounded-2xl shadow p-6 mt-6">
 
-    <h3 class="text-lg font-bold mb-4">Absensi 7 Hari Terakhir</h3>
+    <h3 class="text-lg font-bold mb-4">
+        Absensi 7 Hari Terakhir
+    </h3>
 
     <div class="space-y-2">
 
-        {{-- @foreach($absensi7Hari as $data)
+        @forelse($absensi7Hari as $data)
             <div class="flex justify-between border-b py-2">
-                <span>{{ $data->tanggal }}</span>
-                <span class="font-bold">{{ $data->total }}</span>
+                <span class="text-gray-600">
+                    {{ \Carbon\Carbon::parse($data->tanggal)->format('d M Y') }}
+                </span>
+
+                <span class="font-bold text-gray-800">
+                    {{ $data->total }}
+                </span>
             </div>
-        @endforeach --}}
+        @empty
+            <p class="text-gray-500 text-sm">
+                Tidak ada data absensi
+            </p>
+        @endforelse
 
     </div>
 

@@ -1,150 +1,268 @@
 @extends('layouts.app')
 
 @section('content')
-<!-- Navbar dengan scroll behavior -->
-<nav class="bg-white/90 backdrop-blur-md shadow-lg fixed w-full top-0 z-50 left-0" x-data="{ mobileMenuOpen: false }">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-16">
-            <!-- Logo/Brand -->
-            <div class="flex-shrink-0">
-                <a href="#" @click.prevent="document.getElementById('home').scrollIntoView({ behavior: 'smooth' })" class="text-xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent hover:from-blue-600 hover:to-indigo-600 transition-all duration-300 cursor-pointer">
-                    SMA Negeri 26
-                </a>
-            </div>
 
-            <!-- Desktop Navigation Center -->
-            <div class="hidden md:block absolute left-1/2 transform -translate-x-1/2">
-                <div class="flex items-center space-x-1">
-                    <a href="#" @click.prevent="document.getElementById('home').scrollIntoView({ behavior: 'smooth' }); mobileMenuOpen = false" class="relative px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 transition duration-300 group cursor-pointer">
-                        Home
-                        <span class="absolute inset-x-0 bottom-0 h-0.5 bg-blue-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
+<!-- HERO -->
+<section id="home" class="py-16 md:py-20 bg-gradient-to-br from-indigo-50 via-white to-blue-50 scroll-animate">
+
+    <div class="max-w-6xl mx-auto px-4 md:px-6">
+
+        <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+
+            <!-- TEXT -->
+            <div class="scroll-animate" data-delay="0">
+
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight mb-4">
+                    Sistem Informasi Sekolah
+                </h1>
+
+                <p class="text-gray-600 text-base md:text-lg mb-6 leading-relaxed">
+                    Kelola data guru, jadwal, absensi, dan laporan sekolah dalam satu sistem yang mudah digunakan.
+                </p>
+
+                <div class="flex flex-wrap gap-3">
+
+                    <a href="{{ url('/login') }}"
+                       class="bg-indigo-600 text-white px-5 py-2.5 rounded-lg hover:bg-indigo-700 transition text-sm md:text-base">
+                        Login
                     </a>
-                    <a href="#" @click.prevent="document.getElementById('about').scrollIntoView({ behavior: 'smooth' }); mobileMenuOpen = false" class="relative px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition duration-300 group cursor-pointer">
-                        About
-                        <span class="absolute inset-x-0 bottom-0 h-0.5 bg-blue-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
+
+                    <a href="#fitur"
+                       class="border border-gray-300 text-gray-700 px-5 py-2.5 rounded-lg hover:bg-gray-50 transition text-sm md:text-base">
+                        Lihat Fitur
                     </a>
-                    <a href="#" @click.prevent="document.getElementById('services').scrollIntoView({ behavior: 'smooth' }); mobileMenuOpen = false" class="relative px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition duration-300 group cursor-pointer">
-                        Services
-                        <span class="absolute inset-x-0 bottom-0 h-0.5 bg-blue-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
-                    </a>
-                    <a href="#" @click.prevent="document.getElementById('contact').scrollIntoView({ behavior: 'smooth' }); mobileMenuOpen = false" class="relative px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition duration-300 group cursor-pointer">
-                        Contact
-                        <span class="absolute inset-x-0 bottom-0 h-0.5 bg-blue-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
-                    </a>
+
                 </div>
+
             </div>
 
-            <!-- Right Side Actions (Login & Register tetap ke halaman lain) -->
-            <div class="hidden md:flex items-center gap-3">
-                <a href="{{ url('/login') }}" class="text-sm font-medium text-gray-600 hover:text-gray-900 px-4 py-2 transition duration-300">
-                    Login
-                </a>
-                <a href="{{ url('/register') }}" class="bg-gradient-to-r from-indigo-600 to-blue-600 text-white hover:from-indigo-700 hover:to-blue-700 px-5 py-2 rounded-lg text-sm font-medium transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
-                    Register
-                </a>
+            <!-- CARD PREVIEW DASHBOARD -->
+            <div class="bg-white rounded-lg shadow-lg p-5 border border-gray-100 scroll-animate" data-delay="200">
+
+                <div class="border-b border-gray-100 pb-3 mb-4">
+                    <div class="font-semibold text-gray-800">Dashboard</div>
+                    <div class="text-xs text-gray-400">Data sekolah hari ini</div>
+                </div>
+
+                <!-- CSS ILUSTRASI GRAFIK -->
+                <div class="mb-5 bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-end justify-center gap-3 h-32">
+                        <div class="flex flex-col items-center gap-1">
+                            <div class="w-12 bg-indigo-200 rounded-t" style="height: 35px;"></div>
+                            <span class="text-[10px] text-gray-400">Guru</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1">
+                            <div class="w-12 bg-indigo-300 rounded-t" style="height: 55px;"></div>
+                            <span class="text-[10px] text-gray-400">Siswa</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1">
+                            <div class="w-12 bg-indigo-400 rounded-t" style="height: 25px;"></div>
+                            <span class="text-[10px] text-gray-400">Kelas</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1">
+                            <div class="w-12 bg-indigo-500 rounded-t" style="height: 45px;"></div>
+                            <span class="text-[10px] text-gray-400">Absensi</span>
+                        </div>
+                    </div>
+
+                    <!-- Garis bantu -->
+                    <div class="relative mt-2">
+                        <div class="border-t border-gray-200"></div>
+                    </div>
+                </div>
+
+
+                </div>
+
+
+
             </div>
 
-            <!-- Mobile Menu Button -->
-            <div class="flex items-center md:hidden">
-                <button @click="mobileMenuOpen = !mobileMenuOpen" class="relative w-10 h-10 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none transition duration-300">
-                    <svg class="h-6 w-6 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                    </svg>
-                </button>
-            </div>
         </div>
+
     </div>
 
-    <!-- Mobile Menu -->
-    <div x-show="mobileMenuOpen" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2" class="md:hidden bg-white/95 backdrop-blur-md border-t border-gray-100 shadow-xl" @click.away="mobileMenuOpen = false">
-        <div class="px-4 pt-3 pb-4 space-y-1">
-            <!-- Menu scroll -->
-            <a href="#" @click.prevent="document.getElementById('home').scrollIntoView({ behavior: 'smooth' }); mobileMenuOpen = false" class="block px-4 py-3 text-base font-medium text-gray-700 rounded-lg hover:text-blue-600 hover:bg-blue-50 transition duration-300 cursor-pointer">
-                Home
-            </a>
-            <a href="#" @click.prevent="document.getElementById('about').scrollIntoView({ behavior: 'smooth' }); mobileMenuOpen = false" class="block px-4 py-3 text-base font-medium text-gray-700 rounded-lg hover:text-blue-600 hover:bg-blue-50 transition duration-300 cursor-pointer">
-                About
-            </a>
-            <a href="#" @click.prevent="document.getElementById('services').scrollIntoView({ behavior: 'smooth' }); mobileMenuOpen = false" class="block px-4 py-3 text-base font-medium text-gray-700 rounded-lg hover:text-blue-600 hover:bg-blue-50 transition duration-300 cursor-pointer">
-                Services
-            </a>
-            <a href="#" @click.prevent="document.getElementById('contact').scrollIntoView({ behavior: 'smooth' }); mobileMenuOpen = false" class="block px-4 py-3 text-base font-medium text-gray-700 rounded-lg hover:text-blue-600 hover:bg-blue-50 transition duration-300 cursor-pointer">
-                Contact
-            </a>
-
-            <!-- Login & Register tetap pindah halaman -->
-            <div class="border-t border-gray-100 mt-4 pt-4 space-y-2">
-                <a href="{{ url('/login') }}" class="block px-4 py-3 text-base font-medium text-gray-700 rounded-lg hover:text-blue-600 hover:bg-blue-50 transition duration-300">
-                    Login
-                </a>
-                <a href="{{ url('/register') }}" class="block text-center bg-gradient-to-r from-indigo-800 to-blue-600 text-white hover:from-indigo-700 hover:to-blue-700 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-300 shadow-md">
-                    Register
-                </a>
-            </div>
-        </div>
-    </div>
-</nav>
-
-<!-- Spacing untuk fixed navbar -->
-<div class="h-16"></div>
-
-<!-- Section Home (menampilkan konten welcome) -->
-<section id="home" class="py-12 bg-gray-50">
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-            <div class="p-6 text-gray-900">
-                <h1 class="text-2xl font-bold mb-4">Selamat Datang di SMA Negeri 26</h1>
-                <p class="text-gray-600">Ini adalah section Home. Konten selamat datang ada di sini.</p>
-            </div>
-        </div>
-    </div>
 </section>
 
-<!-- Section About -->
-<section id="about" class="py-12 bg-gray-100">
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-            <div class="p-6 text-gray-900">
-                <h1 class="text-2xl font-bold mb-4">Tentang SMA Negeri 26</h1>
-                <p class="text-gray-600">Informasi tentang sekolah, visi misi, dan sejarah singkat.</p>
-            </div>
-        </div>
+<!-- ABOUT -->
+<section id="about" class="py-16 bg-white border-t border-gray-100 scroll-animate">
+
+    <div class="max-w-4xl mx-auto px-4 text-center">
+
+        <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-3">
+            Tentang Sistem Ini
+        </h2>
+
+        <p class="text-gray-500 leading-relaxed text-sm md:text-base">
+            Dibangun untuk membantu sekolah dalam mengelola data guru, jadwal pelajaran, absensi siswa, dan pembuatan laporan.
+            Sistem ini dapat diakses oleh Admin, Guru, dan Kepala Sekolah sesuai dengan hak akses masing-masing.
+        </p>
+
     </div>
+
 </section>
 
-<!-- Section Services -->
-<section id="services" class="py-12 bg-gray-50">
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-            <div class="p-6 text-gray-900">
-                <h1 class="text-2xl font-bold mb-4">Layanan Kami</h1>
-                <p class="text-gray-600">Fasilitas, ekstrakurikuler, dan layanan pendidikan yang tersedia.</p>
-            </div>
+<!-- FITUR -->
+<section id="fitur" class="py-16 bg-gray-50 border-t border-gray-100">
+
+    <div class="max-w-6xl mx-auto px-4">
+
+        <div class="text-center mb-10 scroll-animate">
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+                Fitur
+            </h2>
+            <p class="text-gray-500 text-sm">
+                Beberapa fitur yang tersedia di sistem ini
+            </p>
         </div>
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+            <div class="bg-white rounded-lg border border-gray-100 p-5 shadow-sm hover:shadow-md transition scroll-animate" data-delay="0">
+                <div class="font-semibold text-gray-800 mb-2 text-lg">Data Guru</div>
+                <p class="text-gray-500 text-sm leading-relaxed">
+                    Kelola data guru, mata pelajaran, dan riwayat mengajar.
+                </p>
+            </div>
+
+            <div class="bg-white rounded-lg border border-gray-100 p-5 shadow-sm hover:shadow-md transition scroll-animate" data-delay="100">
+                <div class="font-semibold text-gray-800 mb-2 text-lg">Absensi</div>
+                <p class="text-gray-500 text-sm leading-relaxed">
+                    Rekap absensi harian dan bulanan untuk guru maupun siswa.
+                </p>
+            </div>
+
+            <div class="bg-white rounded-lg border border-gray-100 p-5 shadow-sm hover:shadow-md transition scroll-animate" data-delay="200">
+                <div class="font-semibold text-gray-800 mb-2 text-lg">Jadwal</div>
+                <p class="text-gray-500 text-sm leading-relaxed">
+                    Atur jadwal pelajaran dengan tampilan yang rapi dan mudah dibaca.
+                </p>
+            </div>
+
+            <div class="bg-white rounded-lg border border-gray-100 p-5 shadow-sm hover:shadow-md transition scroll-animate" data-delay="0">
+                <div class="font-semibold text-gray-800 mb-2 text-lg">Laporan</div>
+                <p class="text-gray-500 text-sm leading-relaxed">
+                    Cetak laporan data sekolah dalam format PDF atau Excel.
+                </p>
+            </div>
+
+            <div class="bg-white rounded-lg border border-gray-100 p-5 shadow-sm hover:shadow-md transition scroll-animate" data-delay="100">
+                <div class="font-semibold text-gray-800 mb-2 text-lg">Manajemen User</div>
+                <p class="text-gray-500 text-sm leading-relaxed">
+                    Atur hak akses pengguna berdasarkan peran masing-masing.
+                </p>
+            </div>
+
+            <div class="bg-white rounded-lg border border-gray-100 p-5 shadow-sm hover:shadow-md transition scroll-animate" data-delay="200">
+                <div class="font-semibold text-gray-800 mb-2 text-lg">Kelas & Siswa</div>
+                <p class="text-gray-500 text-sm leading-relaxed">
+                    Data kelas dan siswa terintegrasi dengan sistem absensi.
+                </p>
+            </div>
+
+        </div>
+
     </div>
+
 </section>
 
-<!-- Section Contact -->
-<section id="contact" class="py-12 bg-gray-100">
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-            <div class="p-6 text-gray-900">
-                <h1 class="text-2xl font-bold mb-4">Kontak Kami</h1>
-                <p class="text-gray-600">Alamat, nomor telepon, email, dan peta lokasi.</p>
+<!-- KONTAK -->
+<section id="kontak" class="py-16 bg-white border-t border-gray-100 scroll-animate">
+
+    <div class="max-w-3xl mx-auto px-4 text-center">
+
+        <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-3">
+            Kontak
+        </h2>
+
+        <p class="text-gray-500 text-sm md:text-base mb-5">
+            Untuk informasi lebih lanjut, silakan hubungi kami.
+        </p>
+
+        <div class="bg-gray-50 rounded-lg p-5 inline-block mx-auto">
+            <div class="text-gray-600 text-sm space-y-2">
+                <div>Email: admin@sekolah.sch.id</div>
+                <div>Telepon: (021) 1234-5678</div>
+                <div>Alamat: Jl. Pendidikan No. 123, Kota Contoh</div>
             </div>
         </div>
+
     </div>
+
 </section>
 
 <style>
-    html {
-        scroll-behavior: smooth;
+html {
+    scroll-behavior: smooth;
+}
+
+/* Animasi Scroll */
+.scroll-animate {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+}
+
+.scroll-animate.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Efek tambahan untuk kartu fitur */
+.scroll-animate:hover {
+    transition: all 0.3s ease;
+}
+</style>
+
+<script>
+// Animasi Scroll tanpa mengubah tampilan
+document.addEventListener('DOMContentLoaded', function() {
+    const animatedElements = document.querySelectorAll('.scroll-animate');
+
+    // Function to check if element is in viewport
+    function isElementInViewport(el) {
+        const rect = el.getBoundingClientRect();
+        const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+        const threshold = 100; // Trigger animation slightly before element enters viewport
+
+        return rect.top <= windowHeight - threshold && rect.bottom >= 0;
     }
 
-    @media (max-width: 768px) {
-        .backdrop-blur-md {
-            backdrop-filter: blur(10px);
-        }
+    // Function to add visible class with delay support
+    function checkAndAnimate() {
+        animatedElements.forEach((el, index) => {
+            if (isElementInViewport(el) && !el.classList.contains('visible')) {
+                // Get delay from data-delay attribute
+                const delay = el.getAttribute('data-delay');
+                const delayTime = delay ? parseInt(delay) : 0;
+
+                setTimeout(() => {
+                    el.classList.add('visible');
+                }, delayTime);
+            }
+        });
     }
-</style>
+
+    // Initial check
+    checkAndAnimate();
+
+    // Check on scroll with throttle for performance
+    let scrollTimeout;
+    window.addEventListener('scroll', function() {
+        if (scrollTimeout) {
+            clearTimeout(scrollTimeout);
+        }
+        scrollTimeout = setTimeout(checkAndAnimate, 50);
+    });
+
+    // Check on resize
+    window.addEventListener('resize', function() {
+        checkAndAnimate();
+    });
+
+    // Also check for any elements that might become visible after page load
+    setTimeout(checkAndAnimate, 100);
+});
+</script>
+
 @endsection

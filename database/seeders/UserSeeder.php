@@ -17,12 +17,7 @@ class UserSeeder extends Seeder
                 'nip' => '19870001',
                 'role' => 'admin',
             ],
-            [
-                'name' => 'Kepala Sekolah',
-                'email' => 'kepsek@sma26.com',
-                'nip' => '19870002',
-                'role' => 'kepala_sekolah',
-            ],
+
             [
                 'name' => 'Operator Sekolah',
                 'email' => 'operator@sma26.com',

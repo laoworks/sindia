@@ -3,6 +3,16 @@
 <head>
 
     <meta charset="UTF-8">
+ <!-- FAVICON - Logo di samping nama website -->
+    <link rel="icon" type="image/png" href="/img/logo.png">
+    <link rel="shortcut icon" href="/img/logo.png">
+    <link rel="apple-touch-icon" href="/img/logo.png">
+
+    <!-- Untuk mendukung berbagai ukuran -->
+    <link rel="icon" type="image/png" sizes="16x16" href="/img/logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/img/logo.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/img/logo.png">
+
 
     <meta
         name="viewport"

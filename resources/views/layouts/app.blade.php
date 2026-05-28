@@ -7,6 +7,16 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
+    <!-- FAVICON - Logo di samping nama website -->
+    <link rel="icon" type="image/png" href="/img/logo.png">
+    <link rel="shortcut icon" href="/img/logo.png">
+    <link rel="apple-touch-icon" href="/img/logo.png">
+
+    <!-- Untuk mendukung berbagai ukuran -->
+    <link rel="icon" type="image/png" sizes="16x16" href="/img/logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/img/logo.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/img/logo.png">
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
@@ -18,7 +28,7 @@
 </head>
 <body class="font-sans antialiased">
     <div class="min-h-screen bg-gray-100">
-
+        <x-navbar></x-navbar>
 
         <main>
             @yield('content')
