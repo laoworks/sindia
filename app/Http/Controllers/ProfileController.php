@@ -11,9 +11,12 @@ use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display the user's profile form.
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | ADMIN PROFILE
+    |--------------------------------------------------------------------------
+    */
+
     public function edit(Request $request): View
     {
         return view('profile.edit', [
@@ -21,9 +24,6 @@ class ProfileController extends Controller
         ]);
     }
 
-    /**
-     * Update the user's profile information.
-     */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         $request->user()->fill($request->validated());
@@ -34,12 +34,46 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        return Redirect::route('profile.edit')
+            ->with('status', 'profile-updated');
     }
 
-    /**
-     * Delete the user's account.
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | GURU PROFILE (FIXED - NO DUPLICATE)
+    |--------------------------------------------------------------------------
+    */
+
+    public function editGuru(Request $request): View
+    {
+        return view('guru.profile.edit', [
+            'user' => $request->user(),
+        ]);
+    }
+
+    public function updateGuru(Request $request): RedirectResponse
+    {
+        $user = $request->user();
+
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email'],
+        ]);
+
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+        ]);
+
+        return back()->with('success', 'Profile berhasil diperbarui');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | DELETE ACCOUNT
+    |--------------------------------------------------------------------------
+    */
+
     public function destroy(Request $request): RedirectResponse
     {
         $request->validateWithBag('userDeletion', [

@@ -24,6 +24,8 @@
         src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
     ></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <!-- Feather Icons -->
     <script src="https://unpkg.com/feather-icons"></script>
 
@@ -101,222 +103,223 @@
 
             <nav class="space-y-1">
 
-                <!-- Dashboard -->
-                <a
-                    href="{{ route('admin.dashboard') }}"
-                    class="
-                        flex items-center gap-3
-                        px-4 py-3 rounded-2xl
-                        transition duration-200
-                        hover:bg-purple-50
-                    "
-                    style="
-                        color: oklch(45.7% 0.24 277.023);
-                        {{ request()->routeIs('admin.dashboard')
-                            ? 'background: oklch(94% 0.03 280);'
-                            : '' }}
-                    "
-                >
+    <!-- Dashboard -->
+    <a
+        href="{{ route('admin.dashboard') }}"
+        class="
+            flex items-center gap-3
+            px-4 py-3 rounded-xl
+            text-sm font-medium
+            transition-all duration-200
+            hover:bg-purple-50
+        "
+        style="
+            color: oklch(45.7% 0.24 277.023);
+            {{ request()->routeIs('admin.dashboard')
+                ? 'background: oklch(94% 0.03 280);'
+                : '' }}
+        "
+    >
 
-                    <i data-feather="home" class="w-5 h-5"></i>
+        <i data-feather="home" class="w-[18px] h-[18px]"></i>
 
-                    <span class="font-semibold">
-                        Dashboard
-                    </span>
+        <span>Dashboard</span>
 
-                </a>
+    </a>
 
-                <!-- User -->
-                <a
-                    href="{{ route('admin.users.index') }}"
-                    class="
-                        flex items-center gap-3
-                        px-4 py-3 rounded-2xl
-                        transition duration-200
-                        hover:bg-purple-50
-                    "
-                    style="
-                        color: oklch(45.7% 0.24 277.023);
-                        {{ request()->routeIs('admin.users.*')
-                            ? 'background: oklch(94% 0.03 280);'
-                            : '' }}
-                    "
-                >
+    <!-- Data User -->
+    <a
+        href="{{ route('admin.users.index') }}"
+        class="
+            flex items-center gap-3
+            px-4 py-3 rounded-xl
+            text-sm font-medium
+            transition-all duration-200
+            hover:bg-purple-50
+        "
+        style="
+            color: oklch(45.7% 0.24 277.023);
+            {{ request()->routeIs('admin.users.*')
+                ? 'background: oklch(94% 0.03 280);'
+                : '' }}
+        "
+    >
 
-                    <i data-feather="users" class="w-5 h-5"></i>
+        <i data-feather="users" class="w-[18px] h-[18px]"></i>
 
-                    <span class="font-medium">
-                        Data User
-                    </span>
+        <span>Data User</span>
 
-                </a>
+    </a>
 
-                <!-- Guru -->
-                <a
-                    href="{{ route('admin.guru.index') }}"
-                    class="
-                        flex items-center gap-3
-                        px-4 py-3 rounded-2xl
-                        transition duration-200
-                        hover:bg-purple-50
-                    "
-                    style="color: oklch(45.7% 0.24 277.023)"
-                >
+    <!-- Data Guru -->
+    <a
+        href="{{ route('admin.guru.index') }}"
+        class="
+            flex items-center gap-3
+            px-4 py-3 rounded-xl
+            text-sm font-medium
+            transition-all duration-200
+            hover:bg-purple-50
+        "
+        style="
+            color: oklch(45.7% 0.24 277.023);
+            {{ request()->routeIs('admin.guru.*')
+                ? 'background: oklch(94% 0.03 280);'
+                : '' }}
+        "
+    >
 
-                    <i data-feather="user-check" class="w-5 h-5"></i>
+        <i data-feather="user-check" class="w-[18px] h-[18px]"></i>
 
-                    <span class="font-medium">
-                        Data Guru
-                    </span>
+        <span>Data Guru</span>
 
-                </a>
+    </a>
 
-                <!-- Kelas -->
-                <a
-                    href="#"
-                    class="
-                        flex items-center gap-3
-                        px-4 py-3 rounded-2xl
-                        transition duration-200
-                        hover:bg-purple-50
-                    "
-                    style="color: oklch(45.7% 0.24 277.023)"
-                >
+    <!-- Data Kelas -->
+    <a
+        href="{{ route('admin.kelas.index') }}"
+        class="
+            flex items-center gap-3
+            px-4 py-3 rounded-xl
+            text-sm font-medium
+            transition-all duration-200
+            hover:bg-purple-50
+        "
+        style="
+            color: oklch(45.7% 0.24 277.023);
+            {{ request()->routeIs('admin.kelas.*')
+                ? 'background: oklch(94% 0.03 280);'
+                : '' }}
+        "
+    >
 
-                    <i data-feather="grid" class="w-5 h-5"></i>
+        <i data-feather="grid" class="w-[18px] h-[18px]"></i>
 
-                    <span class="font-medium">
-                        Data Kelas
-                    </span>
+        <span>Data Kelas</span>
 
-                </a>
+    </a>
 
-                <!-- Mata Pelajaran -->
-                <a
-                    href="#"
-                    class="
-                        flex items-center gap-3
-                        px-4 py-3 rounded-2xl
-                        transition duration-200
-                        hover:bg-purple-50
-                    "
-                    style="color: oklch(45.7% 0.24 277.023)"
-                >
+    <!-- Mata Pelajaran -->
+    <a
+        href="{{ route('admin.mapel.index') }}"
+        class="
+            flex items-center gap-3
+            px-4 py-3 rounded-xl
+            text-sm font-medium
+            transition-all duration-200
+            hover:bg-purple-50
+        "
+        style="
+            color: oklch(45.7% 0.24 277.023);
+            {{ request()->routeIs('admin.mapel.*')
+                ? 'background: oklch(94% 0.03 280);'
+                : '' }}
+        "
+    >
 
-                    <i data-feather="book-open" class="w-5 h-5"></i>
+        <i data-feather="book-open" class="w-[18px] h-[18px]"></i>
 
-                    <span class="font-medium">
-                        Mata Pelajaran
-                    </span>
+        <span>Mata Pelajaran</span>
 
-                </a>
+    </a>
 
-                <!-- Jadwal -->
-                <a
-                    href="#"
-                    class="
-                        flex items-center gap-3
-                        px-4 py-3 rounded-2xl
-                        transition duration-200
-                        hover:bg-purple-50
-                    "
-                    style="color: oklch(45.7% 0.24 277.023)"
-                >
+    <!-- Jadwal -->
+    <a
+        href="{{ route('admin.jadwal.index') }}"
+        class="
+            flex items-center gap-3
+            px-4 py-3 rounded-xl
+            text-sm font-medium
+            transition-all duration-200
+            hover:bg-purple-50
+        "
+        style="
+            color: oklch(45.7% 0.24 277.023);
+            {{ request()->routeIs('admin.jadwal.*')
+                ? 'background: oklch(94% 0.03 280);'
+                : '' }}
+        "
+    >
 
-                    <i data-feather="calendar" class="w-5 h-5"></i>
+        <i data-feather="calendar" class="w-[18px] h-[18px]"></i>
 
-                    <span class="font-medium">
-                        Jadwal Mengajar
-                    </span>
+        <span>Jadwal Mengajar</span>
 
-                </a>
+    </a>
 
-                <!-- Absensi -->
-                <a
-                    href="#"
-                    class="
-                        flex items-center gap-3
-                        px-4 py-3 rounded-2xl
-                        transition duration-200
-                        hover:bg-purple-50
-                    "
-                    style="color: oklch(45.7% 0.24 277.023)"
-                >
+    <!-- Absensi -->
+    <a
+        href="{{ route('admin.absensi.index') }}"
+        class="
+            flex items-center gap-3
+            px-4 py-3 rounded-xl
+            text-sm font-medium
+            transition-all duration-200
+            hover:bg-purple-50
+        "
+        style="
+            color: oklch(45.7% 0.24 277.023);
+            {{ request()->routeIs('admin.absensi.*')
+                ? 'background: oklch(94% 0.03 280);'
+                : '' }}
+        "
+    >
 
-                    <i data-feather="clipboard" class="w-5 h-5"></i>
+        <i data-feather="clipboard" class="w-[18px] h-[18px]"></i>
 
-                    <span class="font-medium">
-                        Data Absensi
-                    </span>
+        <span>Data Absensi</span>
 
-                </a>
+    </a>
 
-                <!-- Laporan -->
-                <a
-                    href="#"
-                    class="
-                        flex items-center gap-3
-                        px-4 py-3 rounded-2xl
-                        transition duration-200
-                        hover:bg-purple-50
-                    "
-                    style="color: oklch(45.7% 0.24 277.023)"
-                >
+    <!-- Profile -->
+    <a
+        href="{{ route('profile.edit') }}"
+        class="
+            flex items-center gap-3
+            px-4 py-3 rounded-xl
+            text-sm font-medium
+            transition-all duration-200
+            hover:bg-purple-50
+        "
+        style="
+            color: oklch(45.7% 0.24 277.023);
+            {{ request()->routeIs('profile.edit')
+                ? 'background: oklch(94% 0.03 280);'
+                : '' }}
+        "
+    >
 
-                    <i data-feather="bar-chart-2" class="w-5 h-5"></i>
+        <i data-feather="user" class="w-[18px] h-[18px]"></i>
 
-                    <span class="font-medium">
-                        Laporan Absensi
-                    </span>
+        <span>Profile</span>
 
-                </a>
+    </a>
 
-                <!-- Pengaturan -->
-                <a
-                    href="#"
-                    class="
-                        flex items-center gap-3
-                        px-4 py-3 rounded-2xl
-                        transition duration-200
-                        hover:bg-purple-50
-                    "
-                    style="color: oklch(45.7% 0.24 277.023)"
-                >
+    <!-- Pengaturan -->
+    <a
+        href="{{ route('admin.pengaturan.index') }}"
+        class="
+            flex items-center gap-3
+            px-4 py-3 rounded-xl
+            text-sm font-medium
+            transition-all duration-200
+            hover:bg-purple-50
+        "
+        style="
+            color: oklch(45.7% 0.24 277.023);
+            {{ request()->routeIs('admin.pengaturan.*')
+                ? 'background: oklch(94% 0.03 280);'
+                : '' }}
+        "
+    >
 
-                    <i data-feather="settings" class="w-5 h-5"></i>
+        <i data-feather="settings" class="w-[18px] h-[18px]"></i>
 
-                    <span class="font-medium">
-                        Pengaturan Sistem
-                    </span>
+        <span>Pengaturan</span>
 
-                </a>
+    </a>
 
-                <!-- Profile -->
-                <a
-                    href="{{ route('profile.edit') }}"
-                    class="
-                        flex items-center gap-3
-                        px-4 py-3 rounded-2xl
-                        transition duration-200
-                        hover:bg-purple-50
-                    "
-                    style="
-                        color: oklch(45.7% 0.24 277.023);
-                        {{ request()->routeIs('profile.edit')
-                            ? 'background: oklch(94% 0.03 280);'
-                            : '' }}
-                    "
-                >
-
-                    <i data-feather="user" class="w-5 h-5"></i>
-
-                    <span class="font-medium">
-                        Profile
-                    </span>
-
-                </a>
-
-            </nav>
+</nav>
 
         </div>
 
