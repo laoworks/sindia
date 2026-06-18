@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Operator;
 
 use App\Http\Controllers\Controller;
 use App\Models\Absensi;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class AbsensiController extends Controller
@@ -23,9 +24,10 @@ class AbsensiController extends Controller
             $query->where('user_id', $request->user_id);
         }
 
-        $absensi = $query->paginate(20);
+        $absensi = $query->paginate(20)->withQueryString();
+        $users = User::where('role', 'guru')->orderBy('name')->get();
 
-        return view('operator.absensi.index', compact('absensi'));
+        return view('operator.absensi.index', compact('absensi', 'users'));
     }
 
     public function show($id)

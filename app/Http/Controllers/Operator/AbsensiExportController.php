@@ -10,14 +10,24 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class AbsensiExportController extends Controller
 {
+    private function filteredQuery(Request $request)
+    {
+        return Absensi::with('user')
+            ->when($request->filled('tanggal'), function ($query) use ($request) {
+                $query->whereDate('tanggal', $request->tanggal);
+            })
+            ->when($request->filled('user_id'), function ($query) use ($request) {
+                $query->where('user_id', $request->user_id);
+            })
+            ->orderBy('tanggal', 'desc');
+    }
+
     // =========================
     // EXPORT EXCEL
     // =========================
     public function excel(Request $request)
     {
-        $data = Absensi::with('user')
-            ->orderBy('tanggal', 'desc')
-            ->get();
+        $data = $this->filteredQuery($request)->get();
 
         return Excel::download(
             new \App\Exports\AbsensiExport($data),
@@ -30,9 +40,7 @@ class AbsensiExportController extends Controller
     // =========================
     public function pdf(Request $request)
     {
-        $data = Absensi::with('user')
-            ->orderBy('tanggal', 'desc')
-            ->get();
+        $data = $this->filteredQuery($request)->get();
 
         $pdf = Pdf::loadView('operator.absensi.pdf', [
             'absensi' => $data

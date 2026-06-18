@@ -17,6 +17,13 @@ return new class extends Migration
             $table->time('jam_mulai');
             $table->time('jam_selesai');
             $table->timestamps();
+
+            $table->index(['guru_id', 'hari']);
+            $table->index(['kelas_id', 'hari']);
+            $table->index(['hari', 'jam_mulai']);
+
+            $table->unique(['guru_id', 'hari', 'jam_mulai'], 'unique_guru_jadwal');
+            $table->unique(['kelas_id', 'hari', 'jam_mulai'], 'unique_kelas_jadwal');
         });
     }
 

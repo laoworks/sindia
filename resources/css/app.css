@@ -1,3 +1,87 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    *,
+    *::before,
+    *::after {
+        border-radius: 0 !important;
+    }
+}
+
+@layer components {
+    .btn-primary {
+        @apply inline-flex items-center justify-center px-4 py-2.5 text-sm font-semibold text-white transition;
+        background-color: oklch(45.7% 0.24 277.023);
+    }
+
+    .btn-primary:hover {
+        background-color: oklch(40% 0.24 277.023);
+    }
+
+    .btn-secondary {
+        @apply inline-flex items-center justify-center px-4 py-2.5 text-sm font-semibold text-gray-700 transition border border-gray-200 bg-white hover:bg-gray-50;
+    }
+
+    .btn-danger {
+        @apply inline-flex items-center justify-center px-4 py-2.5 text-sm font-semibold text-white transition bg-red-600 hover:bg-red-700;
+    }
+
+    .card {
+        @apply bg-white border border-gray-100 shadow-sm;
+    }
+
+    .input-field {
+        @apply w-full border-gray-300 focus:border-purple-500 focus:ring-purple-500;
+    }
+
+    .sidebar {
+        @apply bg-slate-50 border-r border-slate-200;
+    }
+
+    .nav-link {
+        @apply flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-700 transition-all duration-200;
+        border-left: 3px solid transparent;
+    }
+
+    .nav-link:hover {
+        @apply bg-purple-100 text-purple-900;
+        border-left-color: oklch(75% 0.12 277.023);
+    }
+
+    .nav-link-active {
+        @apply bg-purple-200 text-purple-900 font-semibold;
+        border-left-color: oklch(45.7% 0.24 277.023);
+    }
+
+    .nav-link-dark {
+        @apply flex items-center gap-3 px-4 py-3 text-sm font-medium text-purple-100 transition-all duration-200;
+        border-left: 3px solid transparent;
+    }
+
+    .nav-link-dark:hover {
+        @apply bg-white/15 text-white;
+        border-left-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .nav-link-dark-active {
+        @apply bg-white/25 text-white font-semibold;
+        border-left-color: #ffffff;
+    }
+
+    .badge {
+        @apply inline-flex items-center px-2.5 py-1 text-xs font-semibold;
+    }
+
+    .table-wrapper {
+        @apply overflow-x-auto border border-gray-100 bg-white;
+    }
+}
+
+/* SweetAlert2 */
+.swal2-popup,
+.swal2-styled,
+.swal2-actions button {
+    border-radius: 0 !important;
+}

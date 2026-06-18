@@ -26,6 +26,10 @@ class GuruController extends Controller
         $gurus = $query->latest()->paginate(10);
         $gurus->appends($request->all());
 
+        if ($request->ajax()) {
+            return view('admin.guru.partials.table', compact('gurus'))->render();
+        }
+
         return view('admin.guru.index', compact('gurus'));
     }
 

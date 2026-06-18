@@ -20,21 +20,25 @@ class Jadwal extends Model
         'jam_selesai'
     ];
 
-    // Relasi ke Guru (User)
+
+
     public function guru()
     {
         return $this->belongsTo(User::class, 'guru_id');
     }
 
-    // Relasi ke Kelas
-    public function kelas()
+    public function absensi()
     {
-        return $this->belongsTo(Kelas::class, 'kelas_id');
+        return $this->hasMany(Absensi::class);
     }
 
-    // Relasi ke Mata Pelajaran
+    public function kelas()
+    {
+        return $this->belongsTo(Kelas::class);
+    }
+
     public function mapel()
     {
-        return $this->belongsTo(MataPelajaran::class, 'mapel_id');
+        return $this->belongsTo(MataPelajaran::class);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Absensi extends Model
 {
@@ -14,6 +15,7 @@ class Absensi extends Model
     protected $fillable = [
         'user_id',
         'tanggal',
+        'jadwal_id',
         'waktu_masuk',
         'waktu_pulang',
         'foto_masuk',
@@ -24,16 +26,43 @@ class Absensi extends Model
         'user_agent'
     ];
 
+    // ============================================
+    // PERBAIKI CASTS - TAMBAHKAN FORMAT SPESIFIK
+    // ============================================
     protected $casts = [
-        'tanggal' => 'date',
-        'waktu_masuk' => 'datetime',
-        'waktu_pulang' => 'datetime',
+        'tanggal' => 'date:Y-m-d',           // ← HANYA TANGGAL (tanpa 00:00:00)
+        'waktu_masuk' => 'datetime:H:i:s',   // ← HANYA JAM
+        'waktu_pulang' => 'datetime:H:i:s',  // ← HANYA JAM
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
-    // Relasi ke User (Guru)
-    public function user()
+    // ============================================
+    // TAMBAHKAN ACCESSORS UNTUK FORMAT LAIN
+    // ============================================
+
+    // Tanggal Indonesia (contoh: Kamis, 18 Juni 2026)
+    public function getTanggalIndonesiaAttribute()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return Carbon::parse($this->tanggal)->isoFormat('dddd, D MMMM YYYY');
+    }
+
+    // Tanggal short (contoh: 2026-06-18)
+    public function getTanggalShortAttribute()
+    {
+        return Carbon::parse($this->tanggal)->format('Y-m-d');
+    }
+
+    // Jam masuk (contoh: 16:19:30)
+    public function getJamMasukAttribute()
+    {
+        return $this->waktu_masuk ? Carbon::parse($this->waktu_masuk)->format('H:i:s') : '-';
+    }
+
+    // Jam pulang (contoh: 16:21:17)
+    public function getJamPulangAttribute()
+    {
+        return $this->waktu_pulang ? Carbon::parse($this->waktu_pulang)->format('H:i:s') : '-';
     }
 
     // Scope untuk filter tanggal
@@ -61,5 +90,15 @@ class Absensi extends Model
             return '<span class="badge bg-warning">Lebih Awal</span>';
         }
         return '<span class="badge bg-secondary">Belum Pulang</span>';
+    }
+
+    public function jadwal()
+    {
+        return $this->belongsTo(Jadwal::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

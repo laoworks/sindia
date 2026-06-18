@@ -20,7 +20,7 @@ class JadwalController extends Controller
         }
 
         return view('operator.jadwal.index', [
-            'jadwal' => $query->paginate(10)
+            'jadwal' => $query->latest()->paginate(10)->withQueryString()
         ]);
     }
 
@@ -35,7 +35,23 @@ class JadwalController extends Controller
 
     public function store(Request $request)
     {
-        Jadwal::create($request->all());
+        $request->validate([
+            'guru_id' => 'required|exists:users,id',
+            'kelas_id' => 'required|exists:kelas,id',
+            'mapel_id' => 'required|exists:mata_pelajaran,id',
+            'hari' => 'required|string|max:20',
+            'jam_mulai' => 'required|date_format:H:i',
+            'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
+        ]);
+
+        Jadwal::create([
+            'guru_id' => $request->guru_id,
+            'kelas_id' => $request->kelas_id,
+            'mapel_id' => $request->mapel_id,
+            'hari' => $request->hari,
+            'jam_mulai' => $request->jam_mulai,
+            'jam_selesai' => $request->jam_selesai,
+        ]);
 
         return redirect()
             ->route('operator.jadwal.index')
@@ -55,7 +71,24 @@ class JadwalController extends Controller
     public function update(Request $request, $id)
     {
         $jadwal = Jadwal::findOrFail($id);
-        $jadwal->update($request->all());
+
+        $request->validate([
+            'guru_id' => 'required|exists:users,id',
+            'kelas_id' => 'required|exists:kelas,id',
+            'mapel_id' => 'required|exists:mata_pelajaran,id',
+            'hari' => 'required|string|max:20',
+            'jam_mulai' => 'required|date_format:H:i',
+            'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
+        ]);
+
+        $jadwal->update([
+            'guru_id' => $request->guru_id,
+            'kelas_id' => $request->kelas_id,
+            'mapel_id' => $request->mapel_id,
+            'hari' => $request->hari,
+            'jam_mulai' => $request->jam_mulai,
+            'jam_selesai' => $request->jam_selesai,
+        ]);
 
         return redirect()
             ->route('operator.jadwal.index')

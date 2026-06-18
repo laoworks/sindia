@@ -8,255 +8,307 @@ use App\Models\Jadwal;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class AbsensiController extends Controller
 {
+    // ============================================
+    // PAKSA ZONA WAKTU KE WIT (UTC+9)
+    // ============================================
+    public function __construct()
+    {
+        // PAKSA WIT DI KONSTRUKTOR
+        date_default_timezone_set('Asia/Jayapura');
+    }
+
+    private function now()
+    {
+        return Carbon::now('Asia/Jayapura'); // WIT (UTC+9)
+    }
+
     public function index()
     {
-        $today = Carbon::now('Asia/Makassar')->toDateString();
+        $now = $this->now();
+        $today = $now->toDateString();
+        $userId = Auth::id();
 
-        $absensi = Absensi::where('user_id', Auth::id())
+        Log::info('INDEX ABSENSI (WIT):', [
+            'waktu' => $now->toDateTimeString(),
+            'timezone' => $now->timezoneName,
+            'php_timezone' => date_default_timezone_get(),
+        ]);
+
+        $absensi = Absensi::with(['jadwal.mapel', 'jadwal.kelas'])
+            ->where('user_id', $userId)
             ->whereDate('tanggal', $today)
             ->first();
 
-        return view('guru.absensi', compact('absensi'));
-    }
+        $hariMap = [
+            'Sunday' => 'Minggu',
+            'Monday' => 'Senin',
+            'Tuesday' => 'Selasa',
+            'Wednesday' => 'Rabu',
+            'Thursday' => 'Kamis',
+            'Friday' => 'Jumat',
+            'Saturday' => 'Sabtu',
+        ];
 
-    /*
-    |--------------------------------------------------------------------------
-    | ABSEN MASUK
-    |--------------------------------------------------------------------------
-    */
+        $hariIni = $hariMap[$now->format('l')];
+
+        $jadwals = Jadwal::with(['mapel', 'kelas'])
+            ->where('guru_id', $userId)
+            ->where('hari', $hariIni)
+            ->orderBy('jam_mulai')
+            ->get();
+
+        return view('guru.absensi', compact('absensi', 'jadwals'));
+    }
 
     public function masuk(Request $request)
     {
-        $userId = Auth::id();
+        // PAKSA WIT (UTC+9)
+        $now = Carbon::now('Asia/Jayapura');
 
-        // =========================
-        // WAKTU SEKARANG
-        // =========================
-        $now = Carbon::now('Asia/Makassar');
-
-        // =========================
-        // ABSENSI HARI INI
-        // =========================
-        $absensi = Absensi::firstOrCreate([
-            'user_id' => $userId,
-            'tanggal' => $now->toDateString(),
+        Log::info('🚀 ABSEN MASUK (WIT):', [
+            'waktu_sekarang' => $now->toDateTimeString(),
+            'timezone' => $now->timezoneName,
+            'format_H_i_s' => $now->format('H:i:s'),
         ]);
 
-        // =========================
-        // CEK SUDAH ABSEN
-        // =========================
-        if ($absensi->waktu_masuk) {
-            return back()->with('error', 'Anda sudah melakukan absen masuk');
-        }
+        try {
+            $userId = Auth::id();
 
-        // =========================
-        // HARI INDONESIA
-        // =========================
-        $hariIndonesia = [
-            'Monday'    => 'Senin',
-            'Tuesday'   => 'Selasa',
-            'Wednesday' => 'Rabu',
-            'Thursday'  => 'Kamis',
-            'Friday'    => 'Jumat',
-            'Saturday'  => 'Sabtu',
-            'Sunday'    => 'Minggu',
-        ];
+            $request->validate([
+                'foto' => 'required|string',
+            ]);
 
-        $hariIni = $hariIndonesia[$now->format('l')];
+            // ============================================
+            // CARI JADWAL AKTIF - PAKAI WIT
+            // ============================================
+            $hariMap = [
+                0 => 'Minggu',
+                1 => 'Senin',
+                2 => 'Selasa',
+                3 => 'Rabu',
+                4 => 'Kamis',
+                5 => 'Jumat',
+                6 => 'Sabtu',
+            ];
+            $hariIni = $hariMap[$now->dayOfWeek];
 
-        // =========================
-        // AMBIL JADWAL HARI INI
-        // =========================
-        $jadwal = Jadwal::where('guru_id', $userId)
-            ->where('hari', $hariIni)
-            ->orderBy('jam_mulai', 'asc')
-            ->first();
+            $jadwals = Jadwal::where('guru_id', $userId)
+                ->where('hari', $hariIni)
+                ->get();
 
-        // =========================
-        // CEK JADWAL
-        // =========================
-        if (!$jadwal) {
-            return back()->with('error', 'Tidak ada jadwal mengajar hari ini');
-        }
+            if ($jadwals->isEmpty()) {
+                return back()->with('error', 'Tidak ada jadwal hari ini.');
+            }
 
-        // =========================
-        // JAM MASUK JADWAL
-        // =========================
-        $jamMasuk = Carbon::parse(
-            $now->toDateString() . ' ' . $jadwal->jam_mulai,
-            'Asia/Makassar'
-        );
+            // Cari jadwal aktif (60 menit sebelum sampai selesai)
+            $toleransiAwal = 60;
+            $jadwalAktif = null;
 
-        // =========================
-        // TOLERANSI TERLAMBAT
-        // =========================
-        $batasTerlambat = $jamMasuk->copy()->addMinutes(10);
+            foreach ($jadwals as $j) {
+                $mulai = Carbon::createFromFormat(
+                    'Y-m-d H:i:s',
+                    $now->format('Y-m-d') . ' ' . $j->jam_mulai,
+                    'Asia/Jayapura'
+                );
 
-        // =========================
-        // STATUS ABSEN
-        // =========================
-        $status = $now->greaterThan($batasTerlambat)
-            ? 'terlambat'
-            : 'tepat_waktu';
+                $selesai = Carbon::createFromFormat(
+                    'Y-m-d H:i:s',
+                    $now->format('Y-m-d') . ' ' . $j->jam_selesai,
+                    'Asia/Jayapura'
+                );
 
-        // =========================
-        // DEBUG LOG
-        // =========================
-        Log::info([
-            'guru_id'          => $userId,
-            'now'              => $now->format('Y-m-d H:i:s'),
-            'hari'             => $hariIni,
-            'jam_jadwal'       => $jamMasuk->format('Y-m-d H:i:s'),
-            'batas_terlambat'  => $batasTerlambat->format('Y-m-d H:i:s'),
-            'status'           => $status,
-        ]);
+                $batasAwal = $mulai->copy()->subMinutes($toleransiAwal);
 
-        // =========================
-        // FOTO
-        // =========================
-        $fotoPath = null;
+                Log::info('CEK JADWAL (WIT):', [
+                    'id' => $j->id,
+                    'jam_mulai' => $j->jam_mulai,
+                    'batas_awal' => $batasAwal->format('H:i:s'),
+                    'now' => $now->format('H:i:s'),
+                    'bisa' => $now->between($batasAwal, $selesai) ? 'YES' : 'NO'
+                ]);
 
-        if ($request->foto) {
+                if ($now->between($batasAwal, $selesai)) {
+                    $jadwalAktif = $j;
+                    break;
+                }
+            }
 
-            $image = str_replace('data:image/png;base64,', '', $request->foto);
-            $image = str_replace(' ', '+', $image);
+            if (!$jadwalAktif) {
+                return back()->with('error', 'Tidak ada jadwal yang sedang berlangsung.');
+            }
 
-            $filename = 'absensi/masuk_' . time() . '.png';
+            // ============================================
+            // CEK ABSENSI SEBELUMNYA
+            // ============================================
+            $absensi = Absensi::where('user_id', $userId)
+                ->where('jadwal_id', $jadwalAktif->id)
+                ->whereDate('tanggal', $now->toDateString())
+                ->first();
 
-            Storage::disk('public')->put(
-                $filename,
-                base64_decode($image)
+            if ($absensi && $absensi->waktu_masuk) {
+                return back()->with('error', 'Anda sudah absen masuk.');
+            }
+
+            // ============================================
+            // HITUNG STATUS - PAKAI WIT
+            // ============================================
+            $jamMulai = Carbon::createFromFormat(
+                'Y-m-d H:i:s',
+                $now->format('Y-m-d') . ' ' . $jadwalAktif->jam_mulai,
+                'Asia/Jayapura'
             );
 
-            $fotoPath = $filename;
+            $batasTelat = $jamMulai->copy()->addMinutes(10);
+            $status = $now->gt($batasTelat) ? 'terlambat' : 'tepat_waktu';
+
+            // ============================================
+            // PROSES FOTO
+            // ============================================
+            $fotoPath = null;
+            if ($request->foto) {
+                $image = preg_replace('/^data:image\/\w+;base64,/', '', $request->foto);
+                $image = str_replace(' ', '+', $image);
+
+                $filename = 'absensi/masuk_' . $userId . '_' . time() . '.png';
+                Storage::disk('public')->put($filename, base64_decode($image));
+                $fotoPath = $filename;
+            }
+
+            // ============================================
+            // SIMPAN - PAKAI WAKTU WIT
+            // ============================================
+            $waktuMasuk = $now->format('H:i:s');
+
+            if (!$absensi) {
+                $absensi = Absensi::create([
+                    'user_id' => $userId,
+                    'jadwal_id' => $jadwalAktif->id,
+                    'tanggal' => $now->toDateString(),
+                    'waktu_masuk' => $waktuMasuk,
+                    'status_masuk' => $status,
+                    'foto_masuk' => $fotoPath,
+                    'ip_address' => $request->ip(),
+                    'user_agent' => $request->userAgent(),
+                ]);
+            } else {
+                $absensi->update([
+                    'waktu_masuk' => $waktuMasuk,
+                    'status_masuk' => $status,
+                    'foto_masuk' => $fotoPath,
+                    'ip_address' => $request->ip(),
+                    'user_agent' => $request->userAgent(),
+                ]);
+            }
+
+            Log::info('✅ ABSEN MASUK BERHASIL (WIT):', [
+                'absensi_id' => $absensi->id,
+                'waktu_masuk' => $waktuMasuk,
+                'waktu_asli' => $now->toDateTimeString(),
+            ]);
+
+            return back()->with('success', '✅ Absen masuk berhasil! (Jam: ' . $waktuMasuk . ' WIT)');
+        } catch (\Exception $e) {
+            Log::error('❌ ERROR:', ['message' => $e->getMessage()]);
+            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
-
-        // =========================
-        // SIMPAN ABSENSI
-        // =========================
-        $absensi->update([
-            'waktu_masuk'  => $now->format('H:i:s'),
-            'status_masuk' => $status,
-            'foto_masuk'   => $fotoPath,
-            'ip_address'   => $request->ip(),
-            'user_agent'   => $request->userAgent(),
-        ]);
-
-        return back()->with('success', 'Absen masuk berhasil');
     }
-
-    /*
-    |--------------------------------------------------------------------------
-    | ABSEN PULANG
-    |--------------------------------------------------------------------------
-    */
 
     public function pulang(Request $request)
     {
-        $userId = Auth::id();
+        // PAKSA WIT (UTC+9)
+        $now = Carbon::now('Asia/Jayapura');
 
-        $now = Carbon::now('Asia/Makassar');
-
-        // =========================
-        // ABSENSI HARI INI
-        // =========================
-        $absensi = Absensi::where('user_id', $userId)
-            ->whereDate('tanggal', $now->toDateString())
-            ->first();
-
-        // =========================
-        // BELUM ABSEN MASUK
-        // =========================
-        if (!$absensi) {
-            return back()->with('error', 'Silakan absen masuk terlebih dahulu');
-        }
-
-        // =========================
-        // SUDAH ABSEN PULANG
-        // =========================
-        if ($absensi->waktu_pulang) {
-            return back()->with('error', 'Anda sudah melakukan absen pulang');
-        }
-
-        // =========================
-        // HARI INDONESIA
-        // =========================
-        $hariIndonesia = [
-            'Monday'    => 'Senin',
-            'Tuesday'   => 'Selasa',
-            'Wednesday' => 'Rabu',
-            'Thursday'  => 'Kamis',
-            'Friday'    => 'Jumat',
-            'Saturday'  => 'Sabtu',
-            'Sunday'    => 'Minggu',
-        ];
-
-        $hariIni = $hariIndonesia[$now->format('l')];
-
-        // =========================
-        // JADWAL TERAKHIR HARI INI
-        // =========================
-        $jadwal = Jadwal::where('guru_id', $userId)
-            ->where('hari', $hariIni)
-            ->orderBy('jam_selesai', 'desc')
-            ->first();
-
-        if (!$jadwal) {
-            return back()->with('error', 'Jadwal tidak ditemukan');
-        }
-
-        // =========================
-        // BATAS PULANG
-        // =========================
-        $jamPulang = Carbon::parse(
-            $now->toDateString() . ' ' . $jadwal->jam_selesai,
-            'Asia/Makassar'
-        );
-
-        // toleransi pulang lebih awal 10 menit
-        $batasPulang = $jamPulang->copy()->subMinutes(10);
-
-        // =========================
-        // STATUS PULANG
-        // =========================
-        $status = $now->lessThan($batasPulang)
-            ? 'lebih_awal'
-            : 'tepat_waktu';
-
-        // =========================
-        // FOTO
-        // =========================
-        $fotoPath = null;
-
-        if ($request->foto) {
-
-            $image = str_replace('data:image/png;base64,', '', $request->foto);
-            $image = str_replace(' ', '+', $image);
-
-            $filename = 'absensi/pulang_' . time() . '.png';
-
-            Storage::disk('public')->put(
-                $filename,
-                base64_decode($image)
-            );
-
-            $fotoPath = $filename;
-        }
-
-        // =========================
-        // UPDATE ABSENSI
-        // =========================
-        $absensi->update([
-            'waktu_pulang'  => $now->format('H:i:s'),
-            'status_pulang' => $status,
-            'foto_pulang'   => $fotoPath,
+        Log::info('🚀 ABSEN PULANG (WIT):', [
+            'waktu_sekarang' => $now->toDateTimeString(),
+            'timezone' => $now->timezoneName,
         ]);
 
-        return back()->with('success', 'Absen pulang berhasil');
+        try {
+            $userId = Auth::id();
+
+            $request->validate([
+                'foto' => 'required|string',
+            ]);
+
+            $absensi = Absensi::where('user_id', $userId)
+                ->whereDate('tanggal', $now->toDateString())
+                ->first();
+
+            if (!$absensi) {
+                return back()->with('error', 'Silakan absen masuk terlebih dahulu.');
+            }
+
+            if ($absensi->waktu_pulang) {
+                return back()->with('error', 'Anda sudah absen pulang.');
+            }
+
+            $jadwal = Jadwal::find($absensi->jadwal_id);
+            if (!$jadwal) {
+                return back()->with('error', 'Jadwal tidak ditemukan.');
+            }
+
+            // Validasi waktu pulang - PAKAI WIT
+            $jamSelesai = Carbon::createFromFormat(
+                'Y-m-d H:i:s',
+                $now->format('Y-m-d') . ' ' . $jadwal->jam_selesai,
+                'Asia/Jayapura'
+            );
+
+            $batasAwal = $jamSelesai->copy()->subMinutes(30);
+            $batasAkhir = $jamSelesai->copy()->addMinutes(60);
+
+            Log::info('VALIDASI PULANG (WIT):', [
+                'jam_selesai' => $jamSelesai->format('H:i:s'),
+                'batas_awal' => $batasAwal->format('H:i:s'),
+                'batas_akhir' => $batasAkhir->format('H:i:s'),
+                'waktu_sekarang' => $now->format('H:i:s'),
+            ]);
+
+            if ($now->lt($batasAwal)) {
+                $menit = $batasAwal->diffInMinutes($now);
+                return back()->with('error', "Maaf, Anda belum bisa absen pulang. Tunggu {$menit} menit lagi.");
+            }
+
+            if ($now->gt($batasAkhir)) {
+                return back()->with('error', 'Maaf, batas waktu absen pulang sudah lewat.');
+            }
+
+            $batasTepatWaktu = $jamSelesai->copy()->subMinutes(10);
+            $status = $now->lt($batasTepatWaktu) ? 'lebih_awal' : 'tepat_waktu';
+
+            // Proses foto
+            $fotoPath = null;
+            if ($request->foto) {
+                $image = preg_replace('/^data:image\/\w+;base64,/', '', $request->foto);
+                $image = str_replace(' ', '+', $image);
+
+                $filename = 'absensi/pulang_' . $userId . '_' . time() . '.png';
+                Storage::disk('public')->put($filename, base64_decode($image));
+                $fotoPath = $filename;
+            }
+
+            $waktuPulang = $now->format('H:i:s');
+
+            $absensi->update([
+                'waktu_pulang' => $waktuPulang,
+                'status_pulang' => $status,
+                'foto_pulang' => $fotoPath,
+            ]);
+
+            Log::info('✅ ABSEN PULANG BERHASIL (WIT):', [
+                'absensi_id' => $absensi->id,
+                'waktu_pulang' => $waktuPulang,
+            ]);
+
+            return back()->with('success', '✅ Absen pulang berhasil! (Jam: ' . $waktuPulang . ' WIT)');
+        } catch (\Exception $e) {
+            Log::error('❌ ERROR:', ['message' => $e->getMessage()]);
+            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
     }
 }

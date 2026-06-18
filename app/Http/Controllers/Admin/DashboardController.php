@@ -8,78 +8,95 @@ use App\Models\Absensi;
 use App\Models\Jadwal;
 use App\Models\Kelas;
 use App\Models\MataPelajaran;
+use App\Models\Pengaturan;
 use Illuminate\Support\Carbon;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        // =========================
-        // TOTAL DATA
-        // =========================
+        Carbon::setLocale('id');
+
+        $today = Carbon::today();
+        $hariIni = $today->translatedFormat('l');
+
         $totalGuru = User::where('role', 'guru')->count();
+        $totalGuruAktif = User::where('role', 'guru')
+            ->where('is_active', true)
+            ->count();
+        $totalOperator = User::where('role', 'operator')->count();
         $totalMapel = MataPelajaran::count();
         $totalJadwal = Jadwal::count();
         $totalKelas = Kelas::count();
 
-        // =========================
-        // ABSENSI HARI INI
-        // =========================
-        $absensiHariIni = Absensi::whereDate('tanggal', now())->count();
+        $absensiHariIni = Absensi::whereDate('tanggal', $today)->count();
 
-        $terlambatHariIni = Absensi::whereDate('tanggal', now())
+        $terlambatHariIni = Absensi::whereDate('tanggal', $today)
             ->where('status_masuk', 'terlambat')
             ->count();
 
-        $guruTerlambat = $terlambatHariIni;
+        $belumAbsenHariIni = max($totalGuruAktif - $absensiHariIni, 0);
+        $persentaseKehadiran = $totalGuruAktif > 0
+            ? (int) round(($absensiHariIni / $totalGuruAktif) * 100)
+            : 0;
 
-        // =========================
-        // CHART 7 HARI (LINE & BAR)
-        // =========================
-        $labels = [];
-        $dataHadir = [];
-        $dataTerlambat = [];
-
-        for ($i = 6; $i >= 0; $i--) {
-
-            $date = Carbon::now()->subDays($i);
-
-            $labels[] = $date->format('d M');
-
-            $dataHadir[] = Absensi::whereDate('tanggal', $date)->count();
-
-            $dataTerlambat[] = Absensi::whereDate('tanggal', $date)
+        $ringkasanAbsensi = collect(range(6, 0))->map(function ($daysAgo) {
+            $date = Carbon::today()->subDays($daysAgo);
+            $total = Absensi::whereDate('tanggal', $date)->count();
+            $terlambat = Absensi::whereDate('tanggal', $date)
                 ->where('status_masuk', 'terlambat')
                 ->count();
-        }
 
-        // =========================
-        // LIST 7 HARI ABSENSI (FIX ERROR KAMU)
-        // =========================
-        $absensi7Hari = Absensi::selectRaw('tanggal, COUNT(*) as total')
-            ->whereBetween('tanggal', [
-                Carbon::now()->subDays(6)->toDateString(),
-                Carbon::now()->toDateString()
-            ])
-            ->groupBy('tanggal')
-            ->orderBy('tanggal', 'desc')
+            return [
+                'tanggal' => $date,
+                'label' => $date->translatedFormat('d M'),
+                'total' => $total,
+                'terlambat' => $terlambat,
+                'tepat_waktu' => max($total - $terlambat, 0),
+            ];
+        });
+
+        $jadwalHariIni = Jadwal::with(['guru', 'kelas', 'mapel'])
+            ->where('hari', $hariIni)
+            ->orderBy('jam_mulai')
+            ->take(5)
             ->get();
 
-        // =========================
-        // RETURN VIEW
-        // =========================
+        $absensiTerbaru = Absensi::with('user')
+            ->latest('tanggal')
+            ->latest('waktu_masuk')
+            ->take(5)
+            ->get();
+
+        $pengaturan = Pengaturan::pluck('value', 'key');
+        $pengaturanWajib = [
+            'jam_masuk_mulai',
+            'jam_masuk_akhir',
+            'jam_pulang_mulai',
+            'jam_pulang_akhir',
+        ];
+        $pengaturanTerisi = collect($pengaturanWajib)
+            ->filter(fn ($key) => filled($pengaturan->get($key)))
+            ->count();
+        $statusPengaturan = $pengaturanTerisi === count($pengaturanWajib);
+
         return view('admin.dashboard', compact(
             'totalGuru',
+            'totalGuruAktif',
+            'totalOperator',
             'totalMapel',
             'totalJadwal',
             'totalKelas',
             'absensiHariIni',
             'terlambatHariIni',
-            'guruTerlambat',
-            'labels',
-            'dataHadir',
-            'dataTerlambat',
-            'absensi7Hari'
+            'belumAbsenHariIni',
+            'persentaseKehadiran',
+            'ringkasanAbsensi',
+            'jadwalHariIni',
+            'absensiTerbaru',
+            'pengaturan',
+            'pengaturanTerisi',
+            'statusPengaturan'
         ));
     }
 }

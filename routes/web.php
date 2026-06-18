@@ -24,11 +24,32 @@ use App\Http\Controllers\Operator\AbsensiExportController;
 use App\Http\Controllers\Operator\JadwalController as OperatorJadwalController;
 use App\Http\Controllers\Operator\GuruController as OperatorGuruController;
 use App\Http\Controllers\Operator\KelasController as OperatorKelasController;
+use App\Http\Controllers\Operator\MapelController as OperatorMapelController;
+use App\Http\Controllers\Operator\ProfileController as OperatorProfileController;
+use App\Http\Controllers\KepalaSekolah\AbsensiController as KepalaAbsensiController;
+use App\Http\Controllers\KepalaSekolah\DashboardController as KepalaDashboardController;
 use App\Models\Absensi;
 use App\Models\Jadwal;
 use App\Models\Kelas;
 use App\Models\MataPelajaran;
 use App\Models\User;
+
+$dashboardRouteByRole = [
+    'admin' => 'admin.dashboard',
+    'guru' => 'guru.dashboard',
+    'operator' => 'operator.dashboard',
+    'kepala_sekolah' => 'kepala.dashboard',
+];
+
+$redirectToDashboard = function () use ($dashboardRouteByRole) {
+    if (!Auth::check()) {
+        return redirect()->route('login');
+    }
+
+    $routeName = $dashboardRouteByRole[Auth::user()->role] ?? 'login';
+
+    return redirect()->route($routeName);
+};
 
 /*
 |--------------------------------------------------------------------------
@@ -36,37 +57,32 @@ use App\Models\User;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', function () {
-
+Route::get('/', function () use ($redirectToDashboard) {
     if (Auth::check()) {
-        return redirect()->route(
-            Auth::user()->role === 'admin'
-                ? 'admin.dashboard'
-                : (
-                    Auth::user()->role === 'operator'
-                    ? 'operator.dashboard'
-                    : 'guru.dashboard'
-                )
-        );
+        return $redirectToDashboard();
     }
 
     return view('welcome');
-});
+})->name('home');
+
+Route::get('/dashboard', $redirectToDashboard)
+    ->middleware('auth')
+    ->name('dashboard');
 
 /*
 |--------------------------------------------------------------------------
-| PROFILE (FIXED ROLE BASED)
+| PROFILE - GLOBAL ACCESS FOR ALL AUTHENTICATED USERS
 |--------------------------------------------------------------------------
 */
 
-// ADMIN PROFILE
-Route::middleware(['auth', 'role:admin'])->group(function () {
+// PROFILE untuk semua user yang sudah login (tanpa batasan role)
+Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// GURU PROFILE
+// GURU PROFILE (opsional, jika ada tampilan berbeda untuk guru)
 Route::middleware(['auth', 'role:guru'])->group(function () {
     Route::get('/guru/profile', [ProfileController::class, 'editGuru'])->name('guru.profile.edit');
     Route::patch('/guru/profile', [ProfileController::class, 'updateGuru'])->name('guru.profile.update');
@@ -124,6 +140,19 @@ Route::middleware(['auth', 'role:guru'])
 
 /*
 |--------------------------------------------------------------------------
+| KEPALA SEKOLAH AREA
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'role:kepala_sekolah'])
+    ->prefix('kepala')
+    ->name('kepala.')
+    ->group(function () {
+        Route::get('/dashboard', [KepalaDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/absensi', [KepalaAbsensiController::class, 'index'])->name('absensi.index');
+    });
+
+/*
+|--------------------------------------------------------------------------
 | OPERATOR AREA (CLEAN & FIXED)
 |--------------------------------------------------------------------------
 */
@@ -131,129 +160,52 @@ Route::middleware(['auth', 'role:operator'])
     ->prefix('operator')
     ->name('operator.')
     ->group(function () {
+        Route::get('/dashboard', [OperatorDashboardController::class, 'index'])->name('dashboard');
 
-        // DASHBOARD
-        Route::get('/dashboard', [OperatorDashboardController::class, 'index'])
-            ->name('dashboard');
+        Route::get('/absensi', [OperatorAbsensiController::class, 'index'])->name('absensi.index');
+        Route::get('/absensi/{absensi}', [OperatorAbsensiController::class, 'show'])->name('absensi.show');
+        Route::delete('/absensi/{absensi}', [OperatorAbsensiController::class, 'destroy'])->name('absensi.destroy');
+        Route::get('/absensi/export/excel', [AbsensiExportController::class, 'excel'])->name('absensi.export.excel');
+        Route::get('/absensi/export/pdf', [AbsensiExportController::class, 'pdf'])->name('absensi.export.pdf');
 
-        // =========================
-        // ABSENSI
-        // =========================
-        Route::get('/absensi', [OperatorAbsensiController::class, 'index'])
-            ->name('absensi.index');
+        Route::get('/jadwal', [OperatorJadwalController::class, 'index'])->name('jadwal.index');
+        Route::get('/jadwal/create', [OperatorJadwalController::class, 'create'])->name('jadwal.create');
+        Route::post('/jadwal', [OperatorJadwalController::class, 'store'])->name('jadwal.store');
+        Route::get('/jadwal/{jadwal}/edit', [OperatorJadwalController::class, 'edit'])->name('jadwal.edit');
+        Route::put('/jadwal/{jadwal}', [OperatorJadwalController::class, 'update'])->name('jadwal.update');
+        Route::delete('/jadwal/{jadwal}', [OperatorJadwalController::class, 'destroy'])->name('jadwal.destroy');
 
-        Route::get('/absensi/{absensi}', [OperatorAbsensiController::class, 'show'])
-            ->name('absensi.show');
+        Route::get('/guru', [OperatorGuruController::class, 'index'])->name('guru.index');
+        Route::get('/guru/create', [OperatorGuruController::class, 'create'])->name('guru.create');
+        Route::post('/guru', [OperatorGuruController::class, 'store'])->name('guru.store');
+        Route::get('/guru/{id}/edit', [OperatorGuruController::class, 'edit'])->name('guru.edit');
+        Route::put('/guru/{id}', [OperatorGuruController::class, 'update'])->name('guru.update');
+        Route::delete('/guru/{id}', [OperatorGuruController::class, 'destroy'])->name('guru.destroy');
 
-        Route::delete('/absensi/{absensi}', [OperatorAbsensiController::class, 'destroy'])
-            ->name('absensi.destroy');
+        Route::resource('kelas', OperatorKelasController::class)->except(['show']);
 
-        // EXPORT
-        Route::get('/absensi/export/excel', [AbsensiExportController::class, 'excel'])
-            ->name('absensi.export.excel');
+        Route::get('/mapel', [OperatorMapelController::class, 'index'])->name('mapel.index');
+        Route::get('/mapel/create', [OperatorMapelController::class, 'create'])->name('mapel.create');
+        Route::post('/mapel', [OperatorMapelController::class, 'store'])->name('mapel.store');
+        Route::get('/mapel/{mapel}/edit', [OperatorMapelController::class, 'edit'])->name('mapel.edit');
+        Route::put('/mapel/{mapel}', [OperatorMapelController::class, 'update'])->name('mapel.update');
+        Route::delete('/mapel/{mapel}', [OperatorMapelController::class, 'destroy'])->name('mapel.destroy');
 
-        Route::get('/absensi/export/pdf', [AbsensiExportController::class, 'pdf'])
-            ->name('absensi.export.pdf');
-
-        // =========================
-        // JADWAL (FULL CRUD FIXED)
-        // =========================
-        Route::get('/jadwal', [OperatorJadwalController::class, 'index'])
-            ->name('jadwal.index');
-
-        Route::get('/jadwal/create', [OperatorJadwalController::class, 'create'])
-            ->name('jadwal.create');
-
-        Route::post('/jadwal', [OperatorJadwalController::class, 'store'])
-            ->name('jadwal.store');
-
-        Route::get('/jadwal/{jadwal}/edit', [OperatorJadwalController::class, 'edit'])
-            ->name('jadwal.edit');
-
-        Route::put('/jadwal/{jadwal}', [OperatorJadwalController::class, 'update'])
-            ->name('jadwal.update');
-
-        Route::delete('/jadwal/{jadwal}', [OperatorJadwalController::class, 'destroy'])
-            ->name('jadwal.destroy');
-    });
-
-
-Route::middleware(['auth', 'role:operator'])
-    ->prefix('operator')
-    ->name('operator.')
-    ->group(function () {
-
-        Route::get('/guru', [OperatorGuruController::class, 'index'])
-            ->name('guru.index');
-
-        Route::get('/guru/create', [OperatorGuruController::class, 'create'])
-            ->name('guru.create');
-
-        Route::post('/guru', [OperatorGuruController::class, 'store'])
-            ->name('guru.store');
-
-        Route::get('/guru/{id}/edit', [OperatorGuruController::class, 'edit'])
-            ->name('guru.edit');
-
-        Route::put('/guru/{id}', [OperatorGuruController::class, 'update'])
-            ->name('guru.update');
-
-        Route::delete('/guru/{id}', [OperatorGuruController::class, 'destroy'])
-            ->name('guru.destroy');
-    });
-
-
-Route::middleware(['auth', 'role:operator'])
-    ->prefix('operator')
-    ->name('operator.')
-    ->group(function () {
-
-        Route::resource('kelas', OperatorKelasController::class);
+        Route::get('/profile', [OperatorProfileController::class, 'edit'])->name('profile.edit');
+        Route::put('/profile', [OperatorProfileController::class, 'update'])->name('profile.update');
     });
 
 
 
-
-Route::middleware(['auth', 'role:operator'])
-    ->prefix('operator')
-    ->name('operator.')
-    ->group(function () {
-
-        Route::get('/mapel', [\App\Http\Controllers\Operator\MapelController::class, 'index'])
-            ->name('mapel.index');
-
-        Route::get('/mapel/create', [\App\Http\Controllers\Operator\MapelController::class, 'create'])
-            ->name('mapel.create');
-
-        Route::post('/mapel', [\App\Http\Controllers\Operator\MapelController::class, 'store'])
-            ->name('mapel.store');
-
-        Route::get('/mapel/{mapel}/edit', [\App\Http\Controllers\Operator\MapelController::class, 'edit'])
-            ->name('mapel.edit');
-
-        Route::put('/mapel/{mapel}', [\App\Http\Controllers\Operator\MapelController::class, 'update'])
-            ->name('mapel.update');
-
-        Route::delete('/mapel/{mapel}', [\App\Http\Controllers\Operator\MapelController::class, 'destroy'])
-            ->name('mapel.destroy');
-    });
-
-
-
-Route::middleware(['auth', 'role:operator'])
-    ->prefix('operator')
-    ->name('operator.')
-    ->group(function () {
-
-        Route::get('/profile', [\App\Http\Controllers\Operator\ProfileController::class, 'edit'])
-            ->name('profile.edit');
-
-        Route::put('/profile', [\App\Http\Controllers\Operator\ProfileController::class, 'update'])
-            ->name('profile.update');
-    });
-
-
-
-
+Route::get('/cek-waktu', function () {
+    return [
+        'server_time' => date('Y-m-d H:i:s'),
+        'php_timezone' => date_default_timezone_get(),
+        'carbon_now' => Carbon\Carbon::now()->toDateTimeString(),
+        'carbon_wita' => Carbon\Carbon::now('Asia/Makassar')->toDateTimeString(),
+        'config_timezone' => config('app.timezone'),
+        'windows_time' => exec('echo %time%'),
+    ];
+});
 
 require __DIR__ . '/auth.php';

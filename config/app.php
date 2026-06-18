@@ -65,8 +65,7 @@ return [
     |
     */
 
-    'timezone' => 'Asia/Jayapura',
-
+    'timezone' => 'Asia/Jayapura', // WIT (UTC+9)
     /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration

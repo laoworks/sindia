@@ -26,7 +26,10 @@ class KelasController extends Controller
             'jurusan'    => 'required|string|max:255',
         ]);
 
-        Kelas::create($request->all());
+        Kelas::create([
+            'nama_kelas' => $request->nama_kelas,
+            'jurusan' => $request->jurusan,
+        ]);
 
         return redirect()->route('admin.kelas.index')
             ->with([
@@ -56,7 +59,10 @@ class KelasController extends Controller
         ]);
 
         $kelas = Kelas::findOrFail($id);
-        $kelas->update($request->all());
+        $kelas->update([
+            'nama_kelas' => $request->nama_kelas,
+            'jurusan' => $request->jurusan,
+        ]);
 
         return redirect()->route('admin.kelas.index')
             ->with([

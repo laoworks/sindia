@@ -1,61 +1,76 @@
 @extends('layouts.operator')
 
 @section('content')
+    <div class="max-w-3xl mx-auto bg-white p-6 shadow-md">
 
-<div class="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md">
+        <h1 class="text-2xl font-bold mb-6">
+            Edit Data Guru
+        </h1>
 
-    <h1 class="text-2xl font-bold mb-6">
-        Edit Data Guru
-    </h1>
+        <form action="{{ route('operator.guru.update', $guru->id) }}" method="POST">
 
-    <form action="{{ route('operator.guru.update', $guru->id) }}" method="POST">
+            @csrf
+            @method('PUT')
 
-        @csrf
-        @method('PUT')
+            <!-- NAMA -->
+            <div class="mb-4">
+                <label class="mb-1 block text-sm font-medium text-gray-700">Nama</label>
+                <input type="text" name="name" value="{{ old('name', $guru->name) }}" class="w-full border p-2"
+                    placeholder="Nama">
+                @error('name')
+                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                @enderror
+            </div>
 
-        <!-- NAMA -->
-        <input type="text" name="name"
-               value="{{ $guru->name }}"
-               class="w-full border p-2 mb-3 rounded"
-               placeholder="Nama">
+            <!-- EMAIL -->
+            <div class="mb-4">
+                <label class="mb-1 block text-sm font-medium text-gray-700">Email</label>
+                <input type="email" name="email" value="{{ old('email', $guru->email) }}" class="w-full border p-2"
+                    placeholder="Email">
+                @error('email')
+                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                @enderror
+            </div>
 
-        <!-- EMAIL -->
-        <input type="email" name="email"
-               value="{{ $guru->email }}"
-               class="w-full border p-2 mb-3 rounded"
-               placeholder="Email">
+            <!-- NIP -->
+            <div class="mb-4">
+                <label class="mb-1 block text-sm font-medium text-gray-700">NIP</label>
+                <input type="text" name="nip" value="{{ old('nip', $guru->nip) }}" class="w-full border p-2"
+                    placeholder="NIP">
+                @error('nip')
+                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                @enderror
+            </div>
 
-        <!-- NIP -->
-        <input type="text" name="nip"
-               value="{{ $guru->nip }}"
-               class="w-full border p-2 mb-3 rounded"
-               placeholder="NIP">
+            <!-- PASSWORD (OPSIONAL) -->
+            <div class="mb-4">
+                <label class="mb-1 block text-sm font-medium text-gray-700">Password Baru</label>
+                <input type="password" name="password" class="w-full border p-2" placeholder="Kosongkan jika tidak diubah">
+                @error('password')
+                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                @enderror
+            </div>
 
-        <!-- PASSWORD (OPSIONAL) -->
-        <input type="password" name="password"
-               class="w-full border p-2 mb-3 rounded"
-               placeholder="Password baru (kosongkan jika tidak diubah)">
+            <!-- CONFIRM PASSWORD -->
+            <div class="mb-4">
+                <label class="mb-1 block text-sm font-medium text-gray-700">Konfirmasi Password</label>
+                <input type="password" name="password_confirmation" class="w-full border p-2"
+                    placeholder="Ulangi password baru">
+            </div>
 
-        <!-- CONFIRM PASSWORD -->
-        <input type="password" name="password_confirmation"
-               class="w-full border p-2 mb-4 rounded"
-               placeholder="Konfirmasi password">
+            <div class="flex gap-2">
 
-        <div class="flex gap-2">
+                <a href="{{ route('operator.guru.index') }}" class="bg-gray-500 text-white px-4 py-2">
+                    Kembali
+                </a>
 
-            <a href="{{ route('operator.guru.index') }}"
-               class="bg-gray-500 text-white px-4 py-2 rounded">
-                Kembali
-            </a>
+                <button class="bg-blue-600 text-white px-4 py-2">
+                    Update
+                </button>
 
-            <button class="bg-blue-600 text-white px-4 py-2 rounded">
-                Update
-            </button>
+            </div>
 
-        </div>
+        </form>
 
-    </form>
-
-</div>
-
+    </div>
 @endsection

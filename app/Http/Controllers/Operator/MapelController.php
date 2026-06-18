@@ -22,11 +22,14 @@ class MapelController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama_mapel' => 'required',
-            'kkm' => 'required|numeric'
+            'nama_mapel' => 'required|string|max:255',
+            'kkm' => 'required|integer|between:0,100'
         ]);
 
-        MataPelajaran::create($request->all());
+        MataPelajaran::create([
+            'nama_mapel' => $request->nama_mapel,
+            'kkm' => $request->kkm,
+        ]);
 
         return redirect()->route('operator.mapel.index')
             ->with('success', 'Data mapel berhasil ditambahkan');
@@ -41,12 +44,15 @@ class MapelController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'nama_mapel' => 'required',
-            'kkm' => 'required|numeric'
+            'nama_mapel' => 'required|string|max:255',
+            'kkm' => 'required|integer|between:0,100'
         ]);
 
         $mapel = MataPelajaran::findOrFail($id);
-        $mapel->update($request->all());
+        $mapel->update([
+            'nama_mapel' => $request->nama_mapel,
+            'kkm' => $request->kkm,
+        ]);
 
         return redirect()->route('operator.mapel.index')
             ->with('success', 'Data mapel berhasil diupdate');

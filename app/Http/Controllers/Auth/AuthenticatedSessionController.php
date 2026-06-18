@@ -18,11 +18,12 @@ class AuthenticatedSessionController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'login' => ['required', 'string'],
+            'login' => ['nullable', 'string', 'required_without:email'],
+            'email' => ['nullable', 'string', 'required_without:login'],
             'password' => ['required', 'string'],
         ]);
 
-        $login = trim($request->login);
+        $login = trim((string) ($request->input('login') ?? $request->input('email')));
 
         $field = filter_var($login, FILTER_VALIDATE_EMAIL)
             ? 'email'
@@ -36,26 +37,13 @@ class AuthenticatedSessionController extends Controller
         if (!Auth::attempt($credentials, $request->boolean('remember'))) {
             return back()->withErrors([
                 'login' => 'Email/NIP atau password salah.',
-            ])->onlyInput('login');
+                'email' => 'Email/NIP atau password salah.',
+            ])->onlyInput('login', 'email');
         }
 
         $request->session()->regenerate();
 
-        $user = Auth::user();
-
-        // ✅ FIX REDIRECT FINAL
-        return match ($user->role) {
-
-            'admin' => redirect()->route('admin.dashboard'),
-
-            'guru' => redirect()->route('guru.dashboard'),
-
-            'operator' => redirect()->route('operator.dashboard'),
-
-            'kepala_sekolah' => redirect()->route('kepala.dashboard'),
-
-            default => redirect('/login'),
-        };
+        return redirect()->route('dashboard');
     }
 
     public function destroy(Request $request): RedirectResponse

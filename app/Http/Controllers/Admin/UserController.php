@@ -50,7 +50,7 @@ class UserController extends Controller
             'email'       => 'required|email|unique:users,email',
             'nip'         => 'nullable|unique:users,nip',
             'role'        => 'required|in:admin,guru,operator,kepala_sekolah',
-            'password'    => 'required|min:6',
+            'password'    => 'required|min:6|confirmed',
             'foto_profil' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
@@ -91,7 +91,7 @@ class UserController extends Controller
             'email'       => 'required|email|unique:users,email,' . $user->id,
             'nip'         => 'nullable|unique:users,nip,' . $user->id,
             'role'        => 'required|in:admin,guru,operator,kepala_sekolah',
-            'password'    => 'nullable|min:6',
+            'password'    => 'nullable|min:6|confirmed',
             'foto_profil' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 

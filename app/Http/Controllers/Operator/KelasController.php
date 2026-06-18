@@ -23,11 +23,14 @@ class KelasController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama_kelas' => 'required',
-            'jurusan' => 'required',
+            'nama_kelas' => 'required|string|max:255',
+            'jurusan' => 'required|string|max:255',
         ]);
 
-        Kelas::create($request->all());
+        Kelas::create([
+            'nama_kelas' => $request->nama_kelas,
+            'jurusan' => $request->jurusan,
+        ]);
 
         return redirect()->route('operator.kelas.index')
             ->with('success', 'Kelas berhasil ditambahkan');
@@ -43,6 +46,11 @@ class KelasController extends Controller
     public function update(Request $request, $id)
     {
         $kelas = Kelas::findOrFail($id);
+
+        $request->validate([
+            'nama_kelas' => 'required|string|max:255',
+            'jurusan' => 'required|string|max:255',
+        ]);
 
         $kelas->update([
             'nama_kelas' => $request->nama_kelas,

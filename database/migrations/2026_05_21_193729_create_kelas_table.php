@@ -13,6 +13,9 @@ return new class extends Migration
             $table->string('nama_kelas');
             $table->string('jurusan');
             $table->timestamps();
+
+            // Index untuk pencarian
+            $table->index(['nama_kelas', 'jurusan']);
         });
     }
 

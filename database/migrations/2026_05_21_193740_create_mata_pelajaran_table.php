@@ -13,6 +13,8 @@ return new class extends Migration
             $table->string('nama_mapel');
             $table->integer('kkm')->default(75);
             $table->timestamps();
+
+            $table->index('nama_mapel');
         });
     }
 

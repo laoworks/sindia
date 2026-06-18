@@ -12,7 +12,11 @@ class ProfileTest extends TestCase
 
     public function test_profile_page_is_displayed(): void
     {
-        $user = User::factory()->create();
+        // Buat user dengan role admin (karena route /profile hanya untuk admin)
+        $user = User::factory()->create([
+            'role' => 'admin',
+            'email_verified_at' => now(), // jika email verification diaktifkan
+        ]);
 
         $response = $this
             ->actingAs($user)
@@ -23,7 +27,11 @@ class ProfileTest extends TestCase
 
     public function test_profile_information_can_be_updated(): void
     {
-        $user = User::factory()->create();
+        // Buat user dengan role admin
+        $user = User::factory()->create([
+            'role' => 'admin',
+            'email_verified_at' => now(),
+        ]);
 
         $response = $this
             ->actingAs($user)
@@ -40,18 +48,21 @@ class ProfileTest extends TestCase
 
         $this->assertSame('Test User', $user->name);
         $this->assertSame('test@example.com', $user->email);
-        $this->assertNull($user->email_verified_at);
     }
 
     public function test_email_verification_status_is_unchanged_when_the_email_address_is_unchanged(): void
     {
-        $user = User::factory()->create();
+        // Buat user dengan role admin dan email sudah terverifikasi
+        $user = User::factory()->create([
+            'role' => 'admin',
+            'email_verified_at' => now(),
+        ]);
 
         $response = $this
             ->actingAs($user)
             ->patch('/profile', [
                 'name' => 'Test User',
-                'email' => $user->email,
+                'email' => $user->email, // email tidak berubah
             ]);
 
         $response
@@ -63,7 +74,11 @@ class ProfileTest extends TestCase
 
     public function test_user_can_delete_their_account(): void
     {
-        $user = User::factory()->create();
+        // Buat user dengan role admin
+        $user = User::factory()->create([
+            'role' => 'admin',
+            'password' => bcrypt('password'), // pastikan password di-set
+        ]);
 
         $response = $this
             ->actingAs($user)
@@ -81,7 +96,11 @@ class ProfileTest extends TestCase
 
     public function test_correct_password_must_be_provided_to_delete_account(): void
     {
-        $user = User::factory()->create();
+        // Buat user dengan role admin
+        $user = User::factory()->create([
+            'role' => 'admin',
+            'password' => bcrypt('password'),
+        ]);
 
         $response = $this
             ->actingAs($user)

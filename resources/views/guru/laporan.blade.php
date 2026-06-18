@@ -1,164 +1,146 @@
 @extends('layouts.guru')
 
 @section('content')
+    <div class="space-y-6">
 
-<div class="space-y-6">
+        <!-- HEADER -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
-    <!-- HEADER -->
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-800">
+                    Laporan Absensi
+                </h1>
 
-        <div>
-            <h1 class="text-3xl font-bold text-gray-800">
-                Laporan Absensi
-            </h1>
+                <p class="text-gray-500 mt-1">
+                    Riwayat absensi dan kehadiran guru
+                </p>
+            </div>
 
-            <p class="text-gray-500 mt-1">
-                Riwayat absensi dan kehadiran guru
-            </p>
-        </div>
-
-        <a
-            href="{{ route('guru.dashboard') }}"
-            class="inline-flex items-center justify-center px-5 py-3 rounded-2xl border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 transition"
-        >
-            Kembali
-        </a>
-
-    </div>
-
-    <!-- CARD -->
-    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-
-        <div class="px-6 py-5 border-b border-gray-100">
-
-            <h2 class="font-semibold text-gray-800">
-                Data Absensi
-            </h2>
+            <a href="{{ route('guru.dashboard') }}"
+                class="inline-flex items-center justify-center px-5 py-3 border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 transition">
+                Kembali
+            </a>
 
         </div>
 
-        <div class="overflow-x-auto">
+        <!-- CARD -->
+        <div class="bg-white border border-gray-100 shadow-sm overflow-hidden">
 
-            <table class="min-w-full">
+            <div class="px-6 py-5 border-b border-gray-100">
 
-                <thead class="bg-gray-50">
+                <h2 class="font-semibold text-gray-800">
+                    Data Absensi
+                </h2>
 
-                    <tr>
+            </div>
 
-                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">
-                            Tanggal
-                        </th>
+            <div class="overflow-x-auto">
 
-                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">
-                            Masuk
-                        </th>
+                <table class="min-w-full">
 
-                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">
-                            Pulang
-                        </th>
+                    <thead class="bg-gray-50">
 
-                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">
-                            Status Masuk
-                        </th>
+                        <tr>
 
-                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">
-                            Status Pulang
-                        </th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">
+                                Tanggal
+                            </th>
 
-                    </tr>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">
+                                Masuk
+                            </th>
 
-                </thead>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">
+                                Pulang
+                            </th>
 
-                <tbody class="divide-y divide-gray-100">
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">
+                                Status Masuk
+                            </th>
 
-                    @forelse($laporan as $item)
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">
+                                Status Pulang
+                            </th>
 
-                    <tr class="hover:bg-gray-50 transition">
+                        </tr>
 
-                        <td class="px-6 py-4 text-sm text-gray-700">
-                            {{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d F Y') }}
-                        </td>
+                    </thead>
 
-                        <td class="px-6 py-4 text-sm text-gray-700">
-                            {{ $item->waktu_masuk ?? '-' }}
-                        </td>
+                    <tbody class="divide-y divide-gray-100">
 
-                        <td class="px-6 py-4 text-sm text-gray-700">
-                            {{ $item->waktu_pulang ?? '-' }}
-                        </td>
+                        @forelse($laporan as $item)
+                            <tr class="hover:bg-gray-50 transition">
 
-                        <td class="px-6 py-4">
+                                <td class="px-6 py-4 text-sm text-gray-700">
+                                    {{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d F Y') }}
+                                </td>
 
-                            @if($item->status_masuk == 'tepat_waktu')
+                                <td class="px-6 py-4 text-sm text-gray-700">
+                                    {{ $item->waktu_masuk ?? '-' }}
+                                </td>
 
-                                <span class="px-3 py-1 rounded-xl text-xs font-medium bg-green-100 text-green-700">
-                                    Tepat Waktu
-                                </span>
+                                <td class="px-6 py-4 text-sm text-gray-700">
+                                    {{ $item->waktu_pulang ?? '-' }}
+                                </td>
 
-                            @elseif($item->status_masuk == 'terlambat')
+                                <td class="px-6 py-4">
 
-                                <span class="px-3 py-1 rounded-xl text-xs font-medium bg-red-100 text-red-700">
-                                    Terlambat
-                                </span>
+                                    @if ($item->status_masuk == 'tepat_waktu')
+                                        <span class="px-3 py-1 text-xs font-medium bg-green-100 text-green-700">
+                                            Tepat Waktu
+                                        </span>
+                                    @elseif($item->status_masuk == 'terlambat')
+                                        <span class="px-3 py-1 text-xs font-medium bg-red-100 text-red-700">
+                                            Terlambat
+                                        </span>
+                                    @else
+                                        <span class="text-gray-400 text-sm">
+                                            -
+                                        </span>
+                                    @endif
 
-                            @else
+                                </td>
 
-                                <span class="text-gray-400 text-sm">
-                                    -
-                                </span>
+                                <td class="px-6 py-4">
 
-                            @endif
+                                    @if ($item->status_pulang == 'tepat_waktu')
+                                        <span class="px-3 py-1 text-xs font-medium bg-green-100 text-green-700">
+                                            Tepat Waktu
+                                        </span>
+                                    @elseif($item->status_pulang == 'lebih_awal')
+                                        <span class="px-3 py-1 text-xs font-medium bg-yellow-100 text-yellow-700">
+                                            Lebih Awal
+                                        </span>
+                                    @else
+                                        <span class="text-gray-400 text-sm">
+                                            -
+                                        </span>
+                                    @endif
 
-                        </td>
+                                </td>
 
-                        <td class="px-6 py-4">
+                            </tr>
 
-                            @if($item->status_pulang == 'tepat_waktu')
+                        @empty
 
-                                <span class="px-3 py-1 rounded-xl text-xs font-medium bg-green-100 text-green-700">
-                                    Tepat Waktu
-                                </span>
+                            <tr>
 
-                            @elseif($item->status_pulang == 'lebih_awal')
+                                <td colspan="5" class="px-6 py-10 text-center text-gray-500">
 
-                                <span class="px-3 py-1 rounded-xl text-xs font-medium bg-yellow-100 text-yellow-700">
-                                    Lebih Awal
-                                </span>
+                                    Belum ada data absensi
 
-                            @else
+                                </td>
 
-                                <span class="text-gray-400 text-sm">
-                                    -
-                                </span>
+                            </tr>
+                        @endforelse
 
-                            @endif
+                    </tbody>
 
-                        </td>
+                </table>
 
-                    </tr>
-
-                    @empty
-
-                    <tr>
-
-                        <td colspan="5" class="px-6 py-10 text-center text-gray-500">
-
-                            Belum ada data absensi
-
-                        </td>
-
-                    </tr>
-
-                    @endforelse
-
-                </tbody>
-
-            </table>
+            </div>
 
         </div>
 
     </div>
-
-</div>
-
 @endsection

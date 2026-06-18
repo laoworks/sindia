@@ -7,6 +7,7 @@ use App\Models\Jadwal;
 use App\Models\User;
 use App\Models\Kelas;
 use App\Models\MataPelajaran;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class JadwalController extends Controller
@@ -73,22 +74,65 @@ class JadwalController extends Controller
 
     public function store(Request $request)
     {
+        // =========================
+        // VALIDASI DASAR
+        // =========================
         $request->validate([
-            'guru_id' => 'required',
-            'kelas_id' => 'required',
-            'mapel_id' => 'required',
-            'hari' => 'required',
-            'jam_mulai' => 'required',
-            'jam_selesai' => 'required',
+            'guru_id'     => 'required|exists:users,id',
+            'kelas_id'    => 'required|exists:kelas,id',
+            'mapel_id'    => 'required|exists:mata_pelajaran,id',
+            'hari'        => 'required|string|max:20',
+            'jam_mulai'   => 'required|date_format:H:i',
+            'jam_selesai' => 'required|date_format:H:i',
         ]);
 
-        Jadwal::create($request->all());
+        // =========================
+        // KONVERSI JAM (CARBON)
+        // =========================
+        $mulai = Carbon::createFromFormat('H:i', $request->jam_mulai);
+        $selesai = Carbon::createFromFormat('H:i', $request->jam_selesai);
 
+        // =========================
+        // VALIDASI LOGIKA JAM
+        // =========================
+        // kasus normal: jam selesai harus lebih besar
+        // kasus shift malam: boleh lewat tengah malam
+        if ($mulai->equalTo($selesai)) {
+            return back()->withErrors([
+                'jam_selesai' => 'Jam selesai tidak boleh sama dengan jam mulai'
+            ])->withInput();
+        }
+
+        // OPTIONAL RULE:
+        // kalau kamu TIDAK mau shift malam, aktifkan ini:
+        /*
+    if ($selesai->lessThanOrEqualTo($mulai)) {
+        return back()->withErrors([
+            'jam_selesai' => 'Jam selesai harus lebih besar dari jam mulai'
+        ])->withInput();
+    }
+    */
+
+        // =========================
+        // SIMPAN DATA
+        // =========================
+        Jadwal::create([
+            'guru_id'     => $request->guru_id,
+            'kelas_id'    => $request->kelas_id,
+            'mapel_id'    => $request->mapel_id,
+            'hari'        => $request->hari,
+            'jam_mulai'   => $request->jam_mulai,
+            'jam_selesai' => $request->jam_selesai,
+        ]);
+
+        // =========================
+        // RESPONSE
+        // =========================
         return redirect()->route('admin.jadwal.index')
             ->with([
-                'title' => 'Berhasil',
+                'title'   => 'Berhasil',
                 'message' => 'Jadwal berhasil ditambahkan',
-                'icon' => 'success'
+                'icon'    => 'success'
             ]);
     }
 
@@ -110,13 +154,64 @@ class JadwalController extends Controller
 
     public function update(Request $request, Jadwal $jadwal)
     {
-        $jadwal->update($request->all());
+        // =========================
+        // VALIDASI DASAR
+        // =========================
+        $request->validate([
+            'guru_id'     => 'required|exists:users,id',
+            'kelas_id'    => 'required|exists:kelas,id',
+            'mapel_id'    => 'required|exists:mata_pelajaran,id',
+            'hari'        => 'required|string|max:20',
+            'jam_mulai'   => 'required|date_format:H:i',
+            'jam_selesai' => 'required|date_format:H:i',
+        ]);
 
+        // =========================
+        // KONVERSI JAM
+        // =========================
+        $mulai = Carbon::createFromFormat('H:i', $request->jam_mulai);
+        $selesai = Carbon::createFromFormat('H:i', $request->jam_selesai);
+
+        // =========================
+        // VALIDASI LOGIKA JAM
+        // =========================
+
+        // tidak boleh sama
+        if ($mulai->equalTo($selesai)) {
+            return back()->withErrors([
+                'jam_selesai' => 'Jam selesai tidak boleh sama dengan jam mulai'
+            ])->withInput();
+        }
+
+        // OPTIONAL (aktifkan jika tidak mau shift malam)
+        /*
+    if ($selesai->lessThanOrEqualTo($mulai)) {
+        return back()->withErrors([
+            'jam_selesai' => 'Jam selesai harus lebih besar dari jam mulai'
+        ])->withInput();
+    }
+    */
+
+        // =========================
+        // UPDATE DATA
+        // =========================
+        $jadwal->update([
+            'guru_id'     => $request->guru_id,
+            'kelas_id'    => $request->kelas_id,
+            'mapel_id'    => $request->mapel_id,
+            'hari'        => $request->hari,
+            'jam_mulai'   => $request->jam_mulai,
+            'jam_selesai' => $request->jam_selesai,
+        ]);
+
+        // =========================
+        // RESPONSE
+        // =========================
         return redirect()->route('admin.jadwal.index')
             ->with([
-                'title' => 'Berhasil',
+                'title'   => 'Berhasil',
                 'message' => 'Jadwal berhasil diupdate',
-                'icon' => 'success'
+                'icon'    => 'success'
             ]);
     }
 

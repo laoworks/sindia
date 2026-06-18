@@ -17,8 +17,25 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+
+            // Custom fields - tanpa menggunakan 'after' di create table
+            $table->string('nip')->unique()->nullable();
+            $table->enum('role', [
+                'admin',
+                'guru',
+                'kepala_sekolah',
+                'operator'
+            ])->default('guru');
+            $table->string('foto_profil')->nullable();
+            $table->boolean('is_active')->default(true);
+
             $table->rememberToken();
             $table->timestamps();
+
+            // Index untuk performa
+            $table->index('role');
+            $table->index('is_active');
+            $table->index('nip');
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
