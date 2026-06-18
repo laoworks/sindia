@@ -45,7 +45,7 @@
         ['url' => route('admin.jadwal.index'), 'route' => 'admin.jadwal.*', 'icon' => 'calendar', 'label' => 'Jadwal Mengajar'],
         ['url' => route('admin.absensi.index'), 'route' => 'admin.absensi.*', 'icon' => 'clipboard', 'label' => 'Data Absensi'],
         ['url' => route('profile.edit'), 'route' => 'profile.edit', 'icon' => 'user', 'label' => 'Profile'],
-        ['url' => route('admin.pengaturan.index'), 'route' => 'admin.pengaturan.*', 'icon' => 'settings', 'label' => 'Pengaturan'],
+
     ];
 @endphp
 <body class="overflow-hidden antialiased bg-white">
@@ -68,7 +68,7 @@
                         <img src="/img/logo.png" alt="Logo" class="object-contain w-full h-full">
                     </div>
                     <div>
-                        <h1 class="text-2xl font-bold tracking-tight" style="color: oklch(45.7% 0.24 277.023)">ABSENSI</h1>
+                        <h1 class="text-2xl font-bold tracking-tight" style="color: oklch(45.7% 0.24 277.023)">SMA Negeri 26 SBB</h1>
                         <p class="mt-1 text-sm" style="color: oklch(45.7% 0.24 277.023 / 70%)">Administrator Panel</p>
                     </div>
                 </div>
