@@ -1,111 +1,162 @@
 @extends('layouts.admin')
 
 @section('content')
-    <div class="max-w-7xl mx-auto">
+    <div class="px-4 mx-auto max-w-7xl sm:px-6">
 
         <!-- HEADER -->
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-8">
+        <div class="flex flex-col gap-4 mb-6 sm:flex-row sm:items-center sm:justify-between">
 
             <div>
-                <h1 class="text-3xl font-bold" style="color: oklch(45.7% 0.24 277.023)">
-                    Mata Pelajaran
+                <h1 class="text-2xl font-bold sm:text-3xl" style="color: oklch(45.7% 0.24 277.023)">
+                    📚 Mata Pelajaran
                 </h1>
-                <p class="text-sm text-gray-500 mt-2">
+                <p class="mt-1 text-sm text-gray-500">
                     Kelola data mata pelajaran
                 </p>
             </div>
 
-            <div class="flex justify-end">
-
+            <div>
                 <a href="{{ route('admin.mapel.create') }}"
-                    class="inline-flex items-center px-5 py-3 text-sm font-semibold text-white shadow-sm hover:opacity-90 transition"
+                    class="inline-flex items-center justify-center w-full sm:w-auto px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:opacity-90 transition rounded-lg"
                     style="background: oklch(45.7% 0.24 277.023)">
-                    Tambah Mapel
+                    ➕ Tambah Mapel
                 </a>
-
             </div>
 
         </div>
 
-        <!-- TABLE -->
-        <div class="bg-white border border-gray-100 overflow-hidden shadow-sm">
+        <!-- ============================================ -->
+        <!-- TABEL - DESKTOP (md ke atas) -->
+        <!-- ============================================ -->
+        <div class="hidden overflow-hidden bg-white border border-gray-100 shadow-sm md:block rounded-xl">
 
-            <table class="min-w-full">
+            <div class="overflow-x-auto">
+                <table class="min-w-full">
 
-                <thead style="background: oklch(97% 0.01 286)">
-                    <tr>
-                        <th class="px-6 py-5 text-left text-xs font-semibold uppercase text-gray-500">No</th>
-                        <th class="px-6 py-5 text-left text-xs font-semibold uppercase text-gray-500">Nama Mapel</th>
-                        <th class="px-6 py-5 text-left text-xs font-semibold uppercase text-gray-500">KKM</th>
-                        <th class="px-6 py-5 text-center text-xs font-semibold uppercase text-gray-500">Aksi</th>
-                    </tr>
-                </thead>
-
-                <tbody class="divide-y divide-gray-100 bg-white">
-
-                    @forelse($mapel as $item)
-                        <tr class="hover:bg-gray-50 transition">
-
-                            <td class="px-6 py-5 text-sm text-gray-500">
-                                {{ $mapel->firstItem() + $loop->index }}
-                            </td>
-
-                            <td class="px-6 py-5 font-semibold text-gray-900">
-                                {{ $item->nama_mapel }}
-                            </td>
-
-                            <td class="px-6 py-5">
-                                <span class="px-3 py-1 text-xs font-semibold bg-blue-100 text-blue-700">
-                                    {{ $item->kkm }}
-                                </span>
-                            </td>
-
-                            <td class="px-6 py-5">
-
-                                <div class="flex justify-center gap-2">
-
-                                    <a href="{{ route('admin.mapel.show', $item->id) }}"
-                                        class="px-4 py-2 text-white bg-blue-500 text-xs">
-                                        View
-                                    </a>
-
-                                    <a href="{{ route('admin.mapel.edit', $item->id) }}"
-                                        class="px-4 py-2 text-white bg-yellow-500 text-xs">
-                                        Edit
-                                    </a>
-
-                                    <!-- DELETE with SWEETALERT -->
-                                    <button type="button"
-                                        onclick="deleteMapel({{ $item->id }}, @js($item->nama_mapel))"
-                                        class="px-4 py-2 text-white bg-red-500 text-xs">
-                                        Delete
-                                    </button>
-
-                                    <form id="delete-form-{{ $item->id }}"
-                                        action="{{ route('admin.mapel.destroy', $item->id) }}" method="POST"
-                                        class="hidden">
-                                        @csrf
-                                        @method('DELETE')
-                                    </form>
-
-                                </div>
-
-                            </td>
-
-                        </tr>
-
-                    @empty
-
+                    <thead style="background: oklch(97% 0.01 286)">
                         <tr>
-                            <td colspan="4" class="text-center py-10 text-gray-500">
-                                Data tidak tersedia
-                            </td>
+                            <th class="px-6 py-4 text-xs font-semibold text-left text-gray-500 uppercase">No</th>
+                            <th class="px-6 py-4 text-xs font-semibold text-left text-gray-500 uppercase">Nama Mapel</th>
+                            <th class="px-6 py-4 text-xs font-semibold text-left text-gray-500 uppercase">KKM</th>
+                            <th class="px-6 py-4 text-xs font-semibold text-center text-gray-500 uppercase">Aksi</th>
                         </tr>
-                    @endforelse
+                    </thead>
 
-                </tbody>
+                    <tbody class="bg-white divide-y divide-gray-100">
 
-            </table>
+                        @forelse($mapel as $item)
+                            <tr class="transition hover:bg-gray-50">
+
+                                <td class="px-6 py-4 text-sm text-gray-500">
+                                    {{ $mapel->firstItem() + $loop->index }}
+                                </td>
+
+                                <td class="px-6 py-4 font-semibold text-gray-900">
+                                    {{ $item->nama_mapel }}
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    <span class="px-3 py-1 text-xs font-semibold text-blue-700 bg-blue-100 rounded-full">
+                                        {{ $item->kkm }}
+                                    </span>
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    <div class="flex justify-center gap-2">
+
+                                        <a href="{{ route('admin.mapel.show', $item->id) }}"
+                                            class="px-3 py-1.5 text-white bg-blue-500 text-xs rounded-lg hover:bg-blue-600 transition">
+                                            View
+                                        </a>
+
+                                        <a href="{{ route('admin.mapel.edit', $item->id) }}"
+                                            class="px-3 py-1.5 text-white bg-yellow-500 text-xs rounded-lg hover:bg-yellow-600 transition">
+                                            Edit
+                                        </a>
+
+                                        <button type="button"
+                                            onclick="deleteMapel({{ $item->id }}, @js($item->nama_mapel))"
+                                            class="px-3 py-1.5 text-white bg-red-500 text-xs rounded-lg hover:bg-red-600 transition">
+                                            Delete
+                                        </button>
+
+                                        <form id="delete-form-{{ $item->id }}"
+                                            action="{{ route('admin.mapel.destroy', $item->id) }}" method="POST"
+                                            class="hidden">
+                                            @csrf
+                                            @method('DELETE')
+                                        </form>
+
+                                    </div>
+                                </td>
+
+                            </tr>
+
+                        @empty
+
+                            <tr>
+                                <td colspan="4" class="py-12 text-center text-gray-500">
+                                    <div class="mb-2 text-4xl">📭</div>
+                                    <p>Data mata pelajaran belum tersedia</p>
+                                </td>
+                            </tr>
+                        @endforelse
+
+                    </tbody>
+
+                </table>
+            </div>
+
+        </div>
+
+        <!-- ============================================ -->
+        <!-- CARD VIEW - MOBILE (di bawah md) -->
+        <!-- ============================================ -->
+        <div class="space-y-4 md:hidden">
+
+            @forelse($mapel as $item)
+                <div class="p-4 bg-white border border-gray-100 shadow-sm rounded-xl">
+
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-xs text-gray-400">#{{ $mapel->firstItem() + $loop->index }}</p>
+                            <p class="text-base font-bold text-gray-900">{{ $item->nama_mapel }}</p>
+                        </div>
+                        <div>
+                            <span class="px-3 py-1 text-xs font-semibold text-blue-700 bg-blue-100 rounded-full">
+                                KKM: {{ $item->kkm }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2 pt-3 mt-4 border-t border-gray-100">
+                        <a href="{{ route('admin.mapel.show', $item->id) }}"
+                            class="flex-1 px-3 py-2 text-xs text-center text-white transition bg-blue-500 rounded-lg hover:bg-blue-600">
+                            📄 View
+                        </a>
+
+                        <a href="{{ route('admin.mapel.edit', $item->id) }}"
+                            class="flex-1 px-3 py-2 text-xs text-center text-white transition bg-yellow-500 rounded-lg hover:bg-yellow-600">
+                            ✏️ Edit
+                        </a>
+
+                        <button type="button"
+                            onclick="deleteMapel({{ $item->id }}, @js($item->nama_mapel))"
+                            class="flex-1 px-3 py-2 text-xs text-center text-white transition bg-red-500 rounded-lg hover:bg-red-600">
+                            🗑️ Delete
+                        </button>
+                    </div>
+
+                </div>
+
+            @empty
+
+                <div class="p-8 text-center text-gray-500 bg-white border border-gray-100 rounded-xl">
+                    <div class="mb-2 text-4xl">📭</div>
+                    <p>Data mata pelajaran belum tersedia</p>
+                </div>
+
+            @endforelse
 
         </div>
 
@@ -115,9 +166,7 @@
         </div>
 
     </div>
-@endsection
 
-@push('scripts')
     {{-- ✅ SWEETALERT SUCCESS --}}
     @if (session('message'))
         <script>
@@ -149,4 +198,4 @@
             });
         }
     </script>
-@endpush
+@endsection

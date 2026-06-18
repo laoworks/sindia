@@ -4,7 +4,7 @@
     <div class="space-y-8">
 
         <!-- HEADER -->
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
 
             <div>
 
@@ -12,7 +12,7 @@
                     Dashboard Guru
                 </h1>
 
-                <p class="text-gray-500 mt-2">
+                <p class="mt-2 text-gray-500">
                     Selamat datang kembali,
                     <span class="font-semibold text-gray-700">
                         {{ auth()->user()->name }}
@@ -22,13 +22,13 @@
             </div>
 
             <!-- DATE -->
-            <div class="bg-white border border-gray-100 px-5 py-4 shadow-sm">
+            <div class="px-5 py-4 bg-white border border-gray-100 rounded-lg shadow-sm">
 
                 <p class="text-sm text-gray-500">
                     Hari Ini
                 </p>
 
-                <h2 class="font-bold text-lg" style="color: oklch(45.7% 0.24 277.023)">
+                <h2 class="text-lg font-bold" style="color: oklch(45.7% 0.24 277.023)">
                     {{ now()->translatedFormat('l, d F Y') }}
                 </h2>
 
@@ -37,12 +37,12 @@
         </div>
 
         <!-- STATISTIC -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
 
             <!-- TOTAL JADWAL -->
-            <div class="bg-white border border-gray-100 p-6 shadow-sm">
+            <div class="p-6 bg-white border border-gray-100 shadow-sm rounded-xl">
 
-                <div class="w-12 h-12 flex items-center justify-center mb-4" style="background: oklch(87% 0.065 274.039)">
+                <div class="flex items-center justify-center w-12 h-12 mb-4 rounded-lg" style="background: oklch(87% 0.065 274.039)">
 
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor" style="color: oklch(45.7% 0.24 277.023)">
@@ -56,16 +56,16 @@
                     Total Jadwal
                 </p>
 
-                <h2 class="text-3xl font-bold mt-2" style="color: oklch(45.7% 0.24 277.023)">
+                <h2 class="mt-2 text-3xl font-bold" style="color: oklch(45.7% 0.24 277.023)">
                     {{ $totalJadwal }}
                 </h2>
 
             </div>
 
             <!-- ABSENSI -->
-            <div class="bg-white border border-gray-100 p-6 shadow-sm">
+            <div class="p-6 bg-white border border-gray-100 shadow-sm rounded-xl">
 
-                <div class="w-12 h-12 flex items-center justify-center mb-4" style="background: oklch(87% 0.065 274.039)">
+                <div class="flex items-center justify-center w-12 h-12 mb-4 rounded-lg" style="background: oklch(87% 0.065 274.039)">
 
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor" style="color: oklch(45.7% 0.24 277.023)">
@@ -79,16 +79,16 @@
                     Absensi Bulan Ini
                 </p>
 
-                <h2 class="text-3xl font-bold mt-2" style="color: oklch(45.7% 0.24 277.023)">
+                <h2 class="mt-2 text-3xl font-bold" style="color: oklch(45.7% 0.24 277.023)">
                     {{ $absensiBulanIni }}
                 </h2>
 
             </div>
 
             <!-- TERLAMBAT -->
-            <div class="bg-white border border-gray-100 p-6 shadow-sm">
+            <div class="p-6 bg-white border border-gray-100 shadow-sm rounded-xl">
 
-                <div class="w-12 h-12 flex items-center justify-center mb-4 bg-red-100">
+                <div class="flex items-center justify-center w-12 h-12 mb-4 bg-red-100 rounded-lg">
 
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-red-500" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -102,16 +102,16 @@
                     Terlambat
                 </p>
 
-                <h2 class="text-3xl font-bold text-red-500 mt-2">
+                <h2 class="mt-2 text-3xl font-bold text-red-500">
                     {{ $terlambat }}
                 </h2>
 
             </div>
 
             <!-- TEPAT WAKTU -->
-            <div class="bg-white border border-gray-100 p-6 shadow-sm">
+            <div class="p-6 bg-white border border-gray-100 shadow-sm rounded-xl">
 
-                <div class="w-12 h-12 flex items-center justify-center mb-4 bg-green-100">
+                <div class="flex items-center justify-center w-12 h-12 mb-4 bg-green-100 rounded-lg">
 
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-green-500" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor">
@@ -124,7 +124,7 @@
                     Tepat Waktu
                 </p>
 
-                <h2 class="text-3xl font-bold text-green-500 mt-2">
+                <h2 class="mt-2 text-3xl font-bold text-green-500">
                     {{ $tepatWaktu }}
                 </h2>
 
@@ -133,10 +133,10 @@
         </div>
 
         <!-- JADWAL HARI INI -->
-        <div class="bg-white border border-gray-100 shadow-sm overflow-hidden">
+        <div class="overflow-hidden bg-white border border-gray-100 shadow-sm rounded-xl">
 
             <!-- HEADER -->
-            <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
+            <div class="flex flex-col gap-3 px-6 py-5 border-b border-gray-100 sm:flex-row sm:items-center sm:justify-between">
 
                 <div>
 
@@ -144,13 +144,13 @@
                         Jadwal Hari Ini
                     </h2>
 
-                    <p class="text-sm text-gray-500 mt-1">
+                    <p class="mt-1 text-sm text-gray-500">
                         Jadwal mengajar guru hari ini
                     </p>
 
                 </div>
 
-                <div class="px-4 py-2 text-sm font-semibold"
+                <div class="px-4 py-2 text-sm font-semibold text-center rounded-lg"
                     style="background: oklch(87% 0.065 274.039); color: oklch(45.7% 0.24 277.023)">
 
                     {{ $jadwalHariIni->count() }} Jadwal
@@ -164,51 +164,47 @@
 
                 @forelse($jadwalHariIni as $jadwal)
                     <div
-                        class="px-6 py-5 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 hover:bg-gray-50 transition duration-200">
+                        class="flex flex-col gap-3 px-4 py-4 transition duration-200 sm:px-6 sm:py-5 sm:flex-row sm:items-center sm:justify-between hover:bg-gray-50">
 
                         <!-- LEFT -->
-                        <div>
+                        <div class="flex items-center gap-3">
 
-                            <div class="flex items-center gap-3">
+                            <div class="flex items-center justify-center w-10 h-10 text-sm font-bold rounded-lg sm:w-12 sm:h-12"
+                                style="background: oklch(87% 0.065 274.039); color: oklch(45.7% 0.24 277.023)">
 
-                                <div class="w-12 h-12 flex items-center justify-center text-sm font-bold"
-                                    style="background: oklch(87% 0.065 274.039); color: oklch(45.7% 0.24 277.023)">
+                                {{ strtoupper(substr($jadwal->mapel->nama_mapel ?? 'M', 0, 1)) }}
 
-                                    {{ strtoupper(substr($jadwal->mapel->nama_mapel ?? 'M', 0, 1)) }}
+                            </div>
 
-                                </div>
+                            <div>
 
-                                <div>
+                                <h3 class="text-sm font-bold text-gray-800 sm:text-base">
+                                    {{ $jadwal->mapel->nama_mapel ?? '-' }}
+                                </h3>
 
-                                    <h3 class="font-bold text-gray-800">
-                                        {{ $jadwal->mapel->nama_mapel ?? '-' }}
-                                    </h3>
-
-                                    <p class="text-sm text-gray-500 mt-1">
-                                        {{ $jadwal->kelas->nama_kelas ?? '-' }}
-                                    </p>
-
-                                </div>
+                                <p class="text-sm text-gray-500 mt-0.5">
+                                    {{ $jadwal->kelas->nama_kelas ?? '-' }}
+                                </p>
 
                             </div>
 
                         </div>
 
                         <!-- RIGHT -->
-                        <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                        <div class="flex flex-wrap items-center gap-2 sm:gap-3">
 
-                            <div class="px-4 py-2 text-sm font-medium bg-gray-100 text-gray-700">
+                            <div class="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium bg-gray-100 text-gray-700 rounded-lg">
 
                                 {{ $jadwal->jam_mulai }} - {{ $jadwal->jam_selesai }}
 
                             </div>
 
                             @if ($jadwal->is_active)
-                                <span class="px-4 py-2 text-sm font-semibold bg-green-100 text-green-700">
+                                <span class="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold bg-green-100 text-green-700 rounded-lg">
                                     Sedang Berlangsung
                                 </span>
                             @else
-                                <span class="px-4 py-2 text-sm font-semibold bg-gray-100 text-gray-600">
+                                <span class="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold bg-gray-100 text-gray-600 rounded-lg">
                                     {{ $jadwal->countdown }}
                                 </span>
                             @endif
@@ -221,7 +217,7 @@
 
                     <div class="px-6 py-16 text-center">
 
-                        <div class="w-20 h-20 mx-auto flex items-center justify-center mb-4"
+                        <div class="flex items-center justify-center w-20 h-20 mx-auto mb-4 rounded-full"
                             style="background: oklch(95% 0.02 274)">
 
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" fill="none" viewBox="0 0 24 24"
@@ -236,7 +232,7 @@
                             Tidak Ada Jadwal Hari Ini
                         </h3>
 
-                        <p class="text-sm text-gray-500 mt-2">
+                        <p class="mt-2 text-sm text-gray-500">
                             Jadwal mengajar belum tersedia untuk hari ini
                         </p>
 
