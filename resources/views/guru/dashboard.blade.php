@@ -1,7 +1,7 @@
 @extends('layouts.guru')
 
 @section('content')
-    <div class="space-y-8">
+    <div class="pb-8 space-y-8">
 
         <!-- HEADER -->
         <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
