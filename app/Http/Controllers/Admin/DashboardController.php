@@ -8,7 +8,6 @@ use App\Models\Absensi;
 use App\Models\Jadwal;
 use App\Models\Kelas;
 use App\Models\MataPelajaran;
-use App\Models\Pengaturan;
 use Illuminate\Support\Carbon;
 
 class DashboardController extends Controller
@@ -68,18 +67,6 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        $pengaturan = Pengaturan::pluck('value', 'key');
-        $pengaturanWajib = [
-            'jam_masuk_mulai',
-            'jam_masuk_akhir',
-            'jam_pulang_mulai',
-            'jam_pulang_akhir',
-        ];
-        $pengaturanTerisi = collect($pengaturanWajib)
-            ->filter(fn ($key) => filled($pengaturan->get($key)))
-            ->count();
-        $statusPengaturan = $pengaturanTerisi === count($pengaturanWajib);
-
         return view('admin.dashboard', compact(
             'totalGuru',
             'totalGuruAktif',
@@ -93,10 +80,7 @@ class DashboardController extends Controller
             'persentaseKehadiran',
             'ringkasanAbsensi',
             'jadwalHariIni',
-            'absensiTerbaru',
-            'pengaturan',
-            'pengaturanTerisi',
-            'statusPengaturan'
+            'absensiTerbaru'
         ));
     }
 }

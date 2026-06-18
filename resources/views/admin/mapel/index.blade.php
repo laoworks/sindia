@@ -8,7 +8,7 @@
 
             <div>
                 <h1 class="text-2xl font-bold sm:text-3xl" style="color: oklch(45.7% 0.24 277.023)">
-                    📚 Mata Pelajaran
+                    Mata Pelajaran
                 </h1>
                 <p class="mt-1 text-sm text-gray-500">
                     Kelola data mata pelajaran
@@ -19,16 +19,16 @@
                 <a href="{{ route('admin.mapel.create') }}"
                     class="inline-flex items-center justify-center w-full sm:w-auto px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:opacity-90 transition rounded-lg"
                     style="background: oklch(45.7% 0.24 277.023)">
-                    ➕ Tambah Mapel
+                    + Tambah Mapel
                 </a>
             </div>
 
         </div>
 
         <!-- ============================================ -->
-        <!-- TABEL - DESKTOP (md ke atas) -->
+        <!-- TABEL - DESKTOP -->
         <!-- ============================================ -->
-        <div class="hidden overflow-hidden bg-white border border-gray-100 shadow-sm md:block rounded-xl">
+        <div class="overflow-hidden bg-white border border-gray-100 shadow-sm rounded-xl">
 
             <div class="overflow-x-auto">
                 <table class="min-w-full">
@@ -61,22 +61,25 @@
                                     </span>
                                 </td>
 
+                                <!-- ============================================ -->
+                                <!-- TOMBOL AKSI - DIPERBESAR -->
+                                <!-- ============================================ -->
                                 <td class="px-6 py-4">
                                     <div class="flex justify-center gap-2">
 
                                         <a href="{{ route('admin.mapel.show', $item->id) }}"
-                                            class="px-3 py-1.5 text-white bg-blue-500 text-xs rounded-lg hover:bg-blue-600 transition">
+                                            class="px-4 py-2 text-sm font-medium text-white transition bg-blue-500 rounded-lg hover:bg-blue-600">
                                             View
                                         </a>
 
                                         <a href="{{ route('admin.mapel.edit', $item->id) }}"
-                                            class="px-3 py-1.5 text-white bg-yellow-500 text-xs rounded-lg hover:bg-yellow-600 transition">
+                                            class="px-4 py-2 text-sm font-medium text-white transition bg-yellow-500 rounded-lg hover:bg-yellow-600">
                                             Edit
                                         </a>
 
                                         <button type="button"
                                             onclick="deleteMapel({{ $item->id }}, @js($item->nama_mapel))"
-                                            class="px-3 py-1.5 text-white bg-red-500 text-xs rounded-lg hover:bg-red-600 transition">
+                                            class="px-4 py-2 text-sm font-medium text-white transition bg-red-500 rounded-lg hover:bg-red-600">
                                             Delete
                                         </button>
 
@@ -110,7 +113,7 @@
         </div>
 
         <!-- ============================================ -->
-        <!-- CARD VIEW - MOBILE (di bawah md) -->
+        <!-- CARD VIEW - MOBILE -->
         <!-- ============================================ -->
         <div class="space-y-4 md:hidden">
 
@@ -129,21 +132,22 @@
                         </div>
                     </div>
 
+                    <!-- TOMBOL MOBILE - DIPERBESAR -->
                     <div class="flex items-center gap-2 pt-3 mt-4 border-t border-gray-100">
                         <a href="{{ route('admin.mapel.show', $item->id) }}"
-                            class="flex-1 px-3 py-2 text-xs text-center text-white transition bg-blue-500 rounded-lg hover:bg-blue-600">
-                            📄 View
+                            class="flex-1 px-4 py-2.5 text-sm font-medium text-center text-white transition bg-blue-500 rounded-lg hover:bg-blue-600">
+                            View
                         </a>
 
                         <a href="{{ route('admin.mapel.edit', $item->id) }}"
-                            class="flex-1 px-3 py-2 text-xs text-center text-white transition bg-yellow-500 rounded-lg hover:bg-yellow-600">
-                            ✏️ Edit
+                            class="flex-1 px-4 py-2.5 text-sm font-medium text-center text-white transition bg-yellow-500 rounded-lg hover:bg-yellow-600">
+                            Edit
                         </a>
 
                         <button type="button"
                             onclick="deleteMapel({{ $item->id }}, @js($item->nama_mapel))"
-                            class="flex-1 px-3 py-2 text-xs text-center text-white transition bg-red-500 rounded-lg hover:bg-red-600">
-                            🗑️ Delete
+                            class="flex-1 px-4 py-2.5 text-sm font-medium text-center text-white transition bg-red-500 rounded-lg hover:bg-red-600">
+                            Delete
                         </button>
                     </div>
 
@@ -167,7 +171,7 @@
 
     </div>
 
-    {{-- ✅ SWEETALERT SUCCESS --}}
+    {{-- SWEETALERT SUCCESS --}}
     @if (session('message'))
         <script>
             Swal.fire({
@@ -179,7 +183,7 @@
         </script>
     @endif
 
-    {{-- ✅ SWEETALERT DELETE --}}
+    {{-- SWEETALERT DELETE --}}
     <script>
         function deleteMapel(id, name) {
             Swal.fire({
